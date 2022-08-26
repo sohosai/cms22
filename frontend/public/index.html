@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>雙峰祭コンテンツ管理システム</title>
+    <script>
+      ;(function (d) {
+        var config = {
+            kitId: 'iwe1rzd',
+            scriptTimeout: 3000,
+            async: true,
+          },
+          h = d.documentElement,
+          t = setTimeout(function () {
+            h.className =
+              h.className.replace(/\bwf-loading\b/g, '') + ' wf-inactive'
+          }, config.scriptTimeout),
+          tk = d.createElement('script'),
+          f = false,
+          s = d.getElementsByTagName('script')[0],
+          a
+        h.className += ' wf-loading'
+        tk.src = 'https://use.typekit.net/' + config.kitId + '.js'
+        tk.async = true
+        tk.onload = tk.onreadystatechange = function () {
+          a = this.readyState
+          if (f || (a && a != 'complete' && a != 'loaded')) return
+          f = true
+          clearTimeout(t)
+          try {
+            Typekit.load(config)
+          } catch (e) {}
+        }
+        s.parentNode.insertBefore(tk, s)
+      })(document)
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script
+      src="https://embed.small.chat/T01HM6324Q4C02DTQ97L8Z.js"
+      async
+    ></script>
+  </body>
+</html>

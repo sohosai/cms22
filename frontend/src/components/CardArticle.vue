@@ -1,0 +1,136 @@
+<template>
+  <div class="card-article">
+    <div class="title">{{ article.title }}</div>
+    <div class="sup status">
+      <div class="label">ステータス</div>
+      <div>
+        <span>{{ articleStatus }}</span>
+        <HintTip>
+          ステータスはそれぞれ以下の状態を表します。
+          <div class="heading">申請期間中</div>
+          コンテンツの申請期間中です。この期間中はコンテンツの編集が可能です。
+          <div class="heading">審査中</div>
+          現在総務局がコンテンツを確認しております。この期間中はコンテンツを修正できません。
+          <div class="heading">承認済み</div>
+          コンテンツの確認が完了しました。雙峰祭当日にコンテンツが公開されます。
+          <div class="heading">却下</div>
+          総務局よりコンテンツの掲載が却下されました。
+        </HintTip>
+      </div>
+    </div>
+    <div class="sup category">
+      <div class="label">企画区分</div>
+      <div>
+        {{
+          contentCategory.find(
+            (category) => category.value === article.category
+          )?.label
+        }}
+      </div>
+    </div>
+    <div class="sup update-at">
+      <div class="label">最終更新日</div>
+      <div>{{ article.updateAt.toLocaleString() }}</div>
+    </div>
+    <div class="action">
+      <Button
+        @click="handleClick"
+        :text="action + '→'"
+        width="5rem"
+        color="secondary"
+      />
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { ArticleOverview } from '@/types/type'
+import { contentState } from '@/const/config'
+import { defineComponent, PropType } from 'vue'
+import { contentCategory } from '@/const/config'
+import Button from './Button.vue'
+import HintTip from './HintTip.vue'
+
+type Props = {
+  article: ArticleOverview
+}
+
+export default defineComponent({
+  components: {
+    Button,
+    HintTip,
+  },
+  props: {
+    article: {
+      type: Object as PropType<ArticleOverview>,
+      required: true,
+    },
+    action: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ['click'],
+  setup(props: Props, context) {
+    const articleStatus = contentState.find(
+      (v) => v.value === props.article.state
+    )?.label
+    const handleClick = () => {
+      context.emit('click', props.article.id)
+    }
+
+    return {
+      articleStatus,
+      handleClick,
+      contentCategory,
+    }
+  },
+})
+</script>
+
+<style lang="scss" scoped>
+.card-article {
+  display: grid;
+  grid-template:
+    'title     ... action' 1fr
+    '...       ... action' 2rem
+    'status    ... action' 1.6rem
+    '...       ... action' 1rem
+    'update-at ... action' 1.6rem
+    '...       ... action' 1rem
+    'cate      ... action' 1.6rem
+    / auto 1rem 9rem;
+  width: clamp(1px, 70rem, 100%);
+  padding: 2rem;
+  border-radius: 0.8rem;
+  border: 1px solid $c-gray;
+  background-color: $c-white;
+}
+.title {
+  @include fs-1b;
+  grid-area: title;
+}
+.sup {
+  @include center;
+  justify-content: space-between;
+}
+.action {
+  @include center;
+  grid-area: action;
+}
+.status {
+  grid-area: status;
+}
+.category {
+  grid-area: cate;
+}
+.update-at {
+  grid-area: update-at;
+  text-align: right;
+}
+.label {
+  opacity: 0.7;
+  color: $c-text-sub;
+  padding-right: 1rem;
+}
+</style>

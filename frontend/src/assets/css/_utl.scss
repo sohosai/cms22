@@ -1,0 +1,61 @@
+// brand color
+$c-sohosai-orange: #ed6d1f;
+$c-sohosai-sky: #1eb8cb;
+
+// color
+$c-main: #66159b;
+$c-main-light: #c9aadb;
+$c-main-dark: #371f46;
+$c-main-dark2: #442557;
+$c-base: #f1f1f1;
+$c-text: #333;
+$c-text-sub: #424042;
+$c-gray: #dfdce4;
+$c-gray-light: #d2cfd6;
+$c-gray-dark: #b1aeb6;
+$c-white: #fff;
+$c-shadow: #00000029;
+$c-mask: #0000007c;
+$c-error: $c-sohosai-orange;
+
+// font
+$ratio: 1.4;
+@mixin fs-0 {
+  font-size: 1.4rem;
+}
+@mixin fs-0b {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+@mixin fs-1 {
+  font-size: 1.6rem;
+}
+@mixin fs-1b {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+@mixin fs-2 {
+  font-size: 1.6rem * $ratio;
+}
+@mixin fs-2b {
+  font-size: 1.6rem * $ratio;
+  font-weight: 700;
+}
+@mixin fs-3 {
+  font-size: 1.6rem * $ratio * $ratio;
+}
+@mixin fs-3b {
+  font-size: 1.6rem * $ratio * $ratio;
+  font-weight: 700;
+}
+
+// utl
+@mixin center($direction: row) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: $direction;
+}
+@mixin clickable {
+  cursor: pointer;
+}

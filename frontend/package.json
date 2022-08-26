@@ -1,0 +1,59 @@
+{
+  "name": "cms",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "format:fix": "prettier --write ."
+  },
+  "dependencies": {
+    "@gtm-support/vue-gtm": "^1.1.0",
+    "@mdi/js": "^5.9.55",
+    "@types/sanitize-html": "^2.3.2",
+    "@vueup/vue-quill": "^1.0.0-beta.7",
+    "@vueuse/core": "^6.0.0",
+    "@vueuse/firebase": "^6.0.0",
+    "@vueuse/router": "^6.0.0",
+    "core-js": "^3.6.5",
+    "firebase": "^8.8.1",
+    "firebaseui": "^5.0.0",
+    "loaders.css": "^0.1.2",
+    "mdi-vue": "^3.0.7",
+    "sanitize-html": "^2.4.0",
+    "vue": "^3.0.0",
+    "vue-material": "^1.0.0-beta-15",
+    "vue-router": "^4.0.0-0",
+    "vue3-material-design-icons": "^5.0.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.0.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^2.2.1",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "typescript": "~4.1.5"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+}

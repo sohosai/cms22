@@ -1,0 +1,22 @@
+@import 'reset.scss';
+@import 'utl.scss';
+
+html {
+  font-size: 62.5%;
+  color: $c-text;
+  font-family: source-han-sans-japanese, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+.material-icons {
+  @include clickable;
+}
+
+p {
+  line-height: 1.7;
+}
