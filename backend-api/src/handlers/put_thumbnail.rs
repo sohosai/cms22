@@ -12,7 +12,7 @@ use std::convert::Infallible;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Input {
-    pub base64: String,
+    pub base64: Option<String>,
     pub mime: String,
 }
 
@@ -68,24 +68,32 @@ pub async fn run(
         Utc::now().format("%Y-%m-%d_%H-%M-%S").to_string()
     );
 
-    let data = base64::decode(&input.base64).unwrap();
+    let id = match &input.base64 {
+        Some(input_data) => {
+            let data = base64::decode(input_data).unwrap();
 
-    info!("Saving thumbnail to {}", filename);
-    let id = match upload_file(&config, &filename, &input.mime, &data).await {
-        Ok(id) => id,
-        Err(e) => {
-            error!("{}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::json(&Message::new(
-                    "You have right permission, but something went wrong while uploading",
-                )),
-                warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            ));
+            info!("Saving thumbnail to {}", filename);
+
+            let id = match upload_file(&config, &filename, &input.mime, &data).await {
+                Ok(id) => id,
+                Err(e) => {
+                    error!("{}", e);
+                    return Ok(warp::reply::with_status(
+                        warp::reply::json(&Message::new(
+                            "You have right permission, but something went wrong while uploading",
+                        )),
+                        warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    ));
+                }
+            };
+
+            Some(id)
         }
+        None => None,
     };
 
     info!(
-        "Updating project {} content with thumbnail id {}",
+        "Updating project {} content with thumbnail id {:?}",
         project_code, id
     );
 
@@ -98,7 +106,7 @@ pub async fn run(
             content_html: None,
             content_url: None,
             review_status: Some(Some(ReviewStatus::Pending)),
-            thumbnail: Some(Some(id)),
+            thumbnail: Some(id),
             editable: None,
         },
     )

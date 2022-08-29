@@ -1,6 +1,6 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ProjectCategory {
     #[serde(rename = "オンライン一般企画")]
     GeneralOnline,
@@ -122,4 +122,18 @@ pub struct UserRecord {
     pub role: Role,
     #[serde(rename = "区分")]
     pub category: UserCategory,
+}
+
+impl Into<crate::model::UserProfile> for UserRecord {
+    fn into(self) -> crate::model::UserProfile {
+        crate::model::UserProfile {
+            email: self.email,
+            name: format!(
+                "{} {}",
+                self.family_name.to_string(),
+                self.given_name.to_string()
+            ),
+            is_committee: self.role.is_committee(),
+        }
+    }
 }

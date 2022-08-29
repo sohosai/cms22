@@ -28,3 +28,11 @@ pub fn get_project_by_user(config: &Config, user_id: &str) -> Result<Option<Proj
         .find(|p| p.owner_user_id == user_id || p.subowner_user_id == user_id)
         .cloned())
 }
+
+pub fn get_project_by_code(config: &Config, project_code: &str) -> Result<Option<ProjectRecord>> {
+    let projects = load_projects(config)?;
+    Ok(projects
+        .iter()
+        .find(|p| p.project_code == project_code)
+        .cloned())
+}
