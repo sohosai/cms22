@@ -1,72 +1,15 @@
 <template>
   <div class="create-article">
     <Breadcrumbs :navigations="navigations" />
+
     <div class="wrap">
-      <div class="heading">
-        企画区分
-        <HintTip
-          >応募した企画の種類を選択してください。どれにも当てはまらない方は「その他」を選択してください。</HintTip
-        >
+      <div class="heading project-name">
+        {{ `[${article.project_code}] ${article.project_name}` }}
       </div>
-      <Select v-model="category" :options="contentCategory" />
-      <div
-        v-if="contentCategory.find((v) => v.value === category)?.deadline"
-        class="deadline-note"
-      >
-        <p>
-          {{
-            contentCategory.find((v) => v.value === category)?.label
-          }}の申請期限は
-          <span class="strong">
-            {{
-              contentCategory
-                .find((v) => v.value === category)
-                ?.deadline.toLocaleString()
-            }}
-          </span>
-          です。この期限以降は記事を編集できなくなります。この期限以内に[保存する]ボタンを押して、コンテンツを保存してください。
-        </p>
-      </div>
-      <Checkbox label="この企画は学術企画に属する" v-model="academic" />
-      <HintTip
-        >応募した企画が学術企画に属する場合はチェックを入れてください。</HintTip
-      >
     </div>
-    <div class="wrap">
-      <div class="heading">
-        企画名
-        <HintTip>応募した企画の名前を入力してください。</HintTip>
-      </div>
-      <FieldText v-model="projectName" />
-    </div>
-    <div class="wrap title-wrap">
-      <div class="heading">
-        <template v-if="articleType == 'html'">
-          <div class="heading">
-            記事タイトル
-            <HintTip>長い場合は見切れる可能性があります。</HintTip>
-          </div>
-        </template>
-        <template v-else-if="articleType == 'url'">
-          <div class="heading">
-            リンク文字
-            <HintTip
-              >リンクで表示される文字です。長い場合は見切れる可能性があります。</HintTip
-            >
-          </div>
-        </template>
-      </div>
-      <FieldText v-model="title" />
-    </div>
-    <div v-if="category.startsWith('headquarters')" class="wrap title-wrap">
-      <div class="heading">
-        記事サムネイル
-        <HintTip>本部企画一覧ページで表示されます。</HintTip>
-      </div>
-      <PreviewImage @inputImage="handleInputImage" :image="decodedThumbnail" />
-    </div>
+
     <div class="wrap content-wrap">
-      <template v-if="articleType == 'html'">
+      <template v-if="contentType == 'ArticleContent'">
         <div class="heading">記事本文</div>
         <QuillEditor
           theme="snow"
@@ -75,77 +18,58 @@
           contentType="html"
         />
       </template>
-      <template v-else-if="articleType == 'url'">
+      <template v-else-if="articleType == 'LinkContent'">
         <div class="heading">リンク先URL</div>
-        <FieldText v-model="url" />
+        <FieldText v-model="contentUrl" />
       </template>
     </div>
     <div class="wrap">
-      <div
-        v-if="
-          contentCategory.find((v) => v.value === category)?.deadline <
-          new Date()
-        "
-        class="deadline-note"
-      >
-        <p>
-          <span class="strong"
-            >{{
-              contentCategory.find((v) => v.value === category)?.label
-            }}の申請期限を過ぎているため保存できません。</span
-          >
-        </p>
+      <div v-if="saveAnnotation !== ''" class="deadline-note">
+        {{ saveAnnotation }}
       </div>
       <Button
-        v-else
+        v-if="saveable"
         @click="handlePostClick"
         :text="saveButtonText"
         :loading="saving"
       />
     </div>
-    <div class="wrap">
-      <Button
-        @click="handleDeleteClick"
-        :text="deleteButtonText"
-        :loading="deleting"
-      />
+
+    <div class="wrap title-wrap">
+      <div class="heading">
+        サムネイル
+        <HintTip>企画一覧ページで利用することがあります。</HintTip>
+      </div>
+      <PreviewImage @inputImage="handleInputImage" :image="thumbnailUrl" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import 'firebase/firestore'
-import { contentCategory, paths } from '@/const/config'
-import { convBlobToBase64 } from '@/utls/convBlobToBase64'
+import { paths } from '@/const/config'
 import { defineComponent, onMounted, ref } from 'vue'
-import { deleteArticle } from '@/utls/deleteArticle'
-import { getThumbnailByArticle } from '@/utls/getThumbnailByArticle'
 import { getUser } from '@/utls/getUser'
-import { isURLArticle } from '@/types/type'
 import { promiseTimeout } from '@vueuse/core'
 import { QuillEditor } from '@vueup/vue-quill'
-import { updateArticleByUserAndId } from '@/utls/updateArticleByUserAndId'
-import { useRoute, useRouter } from 'vue-router'
+import { updateContent } from '@/utls/updateContent'
+import { getContentByPj } from '@/utls/getContentByPj'
+import { useRoute } from 'vue-router'
 import { useToggle } from '@vueuse/core'
 import Breadcrumbs from './Breadcrumbs.vue'
 import Button from './Button.vue'
-import Checkbox from '@/components/Checkbox.vue'
 import FieldText from '@/components/FieldText.vue'
 import HintTip from './HintTip.vue'
 import PreviewImage from '@/components/PreviewImage.vue'
-import Select from '@/components/Select.vue'
-import { getArticleByUserAndId } from '@/utls/getArticleByUserAndId'
+import { checkSaveAbility } from '@/utls/checkSaveAbility'
 
 export default defineComponent({
   components: {
     Breadcrumbs,
     Button,
-    Checkbox,
     FieldText,
     HintTip,
     QuillEditor,
-    Select,
     PreviewImage,
   },
   async setup() {
@@ -269,114 +193,84 @@ export default defineComponent({
     })
 
     const route = useRoute()
-    const router = useRouter()
-    const articleId = String(route.params.id)
+    const projectCode = String(route.params.id)
     const [applied, toggleApplied] = useToggle(false)
     const user = getUser()
     if (!user) return
+
     const saveButtonText = ref('保存する')
-    const deleteButtonText = ref('このコンテンツを削除する')
-    const article = await getArticleByUserAndId(user.uid, articleId)
-    const title = ref(article.title)
-    const projectName = ref(article.projectName)
-    const contentHtml = isURLArticle(article)
-      ? ref('')
-      : ref(article.contentHtml)
-    const url = isURLArticle(article) ? ref(article.url) : ref('')
-    const category = ref(article.category)
-    const academic = ref(article.academic)
-    const articleType = ref(article.articleType)
+    const article = await getContentByPj(projectCode)
+
+    const contentHtml = ref(article.content_html)
+    const contentUrl = ref(article.content_url)
+    const contentType = ref(article.content_type)
+
     let thumbnail = new Blob()
-    const decodedThumbnail = article.category.startsWith('headquarters')
-      ? await convBlobToBase64(await getThumbnailByArticle(article))
-      : ''
+    const thumbnailUrl = article.thumbnail
+
     const navigations = ref([
       { label: paths.contents.label(), path: paths.contents.path() },
       {
-        label: paths.editArticle.label(article.title),
-        path: paths.editArticle.path(articleId),
+        label: paths.editArticle.label(
+          `[${article.project_code}] ${article.project_name}`
+        ),
+        path: paths.editArticle.path(article.project_code),
       },
     ])
+
+    const saveAbility = await checkSaveAbility(article.project_code)
+    let saveAnnotation = ''
+    let saveable = saveAbility.total
+
+    if (saveAbility.is_committee) {
+      saveAnnotation =
+        '実委人は期限や設定に関わらずいつでも記事を編集・保存できます。この機能は注意して使用してください。'
+    } else if (!saveAbility.is_my_project) {
+      saveAnnotation = '自分の企画ではないため保存できません。' // そもそもgetでこけるはずなのでunreachableなはず
+    } else if (!saveAbility.in_save_period && saveAbility.is_editable) {
+      saveAnnotation =
+        '申請期間外ですが、この企画には例外的な保存許可が設定されています。'
+    }
+
     const saving = ref(false)
-    const deleting = ref(false)
     const handleInputImage = (file: Blob) => {
       thumbnail = file
     }
     const handlePostClick = async () => {
-      if (category.value === 'unselected') {
-        alert('企画区分を選択してください。')
-        return
-      }
-      if (projectName.value === '') {
-        alert('企画名を入力してください。')
-        return
-      }
       saving.value = true
       saveButtonText.value = '保存中'
 
-      if (isURLArticle(article)) {
-        const newArticle = {
-          ...article,
-          projectName: projectName.value,
-          title: title.value,
-          category: category.value,
-          academic: academic.value,
-          url: url.value,
-        }
-        await updateArticleByUserAndId(
-          newArticle,
-          thumbnail.size > 0 ? thumbnail : undefined
-        )
-      } else {
-        const newArticle = {
-          ...article,
-          projectName: projectName.value,
-          title: title.value,
-          category: category.value,
-          academic: academic.value,
-          contentHtml: contentHtml.value,
-        }
-        await updateArticleByUserAndId(
-          newArticle,
-          thumbnail.size > 0 ? thumbnail : undefined
-        )
+      const newArticle = {
+        ...article,
+        content_type: contentType.value,
+        content_html: contentHtml.value,
+        content_url: contentUrl.value,
       }
+
+      console.log(thumbnail)
+      await updateContent(newArticle, thumbnail)
+
       saving.value = false
       saveButtonText.value = '保存完了'
       await promiseTimeout(2000)
       saveButtonText.value = '保存する'
     }
-    const handleDeleteClick = async () => {
-      if (!confirm('このコンテンツを削除します。よろしいですか？')) {
-        return
-      }
-      deleting.value = true
-      deleteButtonText.value = '削除中'
-      await deleteArticle(articleId, article.authorId)
-      router.push(paths.contents.path())
-    }
 
     return {
-      academic,
       applied,
       article,
-      articleType,
-      category,
-      contentCategory,
+      contentType,
       contentHtml,
-      deleteButtonText,
-      deleting,
-      handleDeleteClick,
+      contentUrl,
       handlePostClick,
       navigations,
-      projectName,
       saveButtonText,
       saving,
-      decodedThumbnail,
+      thumbnailUrl,
       handleInputImage,
-      title,
       toggleApplied,
-      url,
+      saveAnnotation,
+      saveable,
     }
   },
 })
@@ -389,6 +283,11 @@ export default defineComponent({
 }
 .heading {
   margin-bottom: 1rem;
+}
+
+.project-name{
+  font-size: 1.5em;
+  font-weight: bold;
 }
 .content-wrap {
   ::v-deep(.ql-toolbar) {

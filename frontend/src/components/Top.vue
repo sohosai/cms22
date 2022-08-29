@@ -3,8 +3,7 @@
     <div class="left">
       <div class="title">雙峰祭コンテンツ投稿システム</div>
       <div class="message">
-        雙峰祭 HP に公開する記事を作成したり
-        <br />雙峰祭 HP に掲載してほしいリンクを申請できます。
+        雙峰祭ウェブサイトに掲載する、企画を紹介する記事やリンクを投稿します。
       </div>
       <div class="start">
         <Button @click="handleStartButton" text="はじめる" />

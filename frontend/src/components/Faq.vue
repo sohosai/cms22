@@ -4,9 +4,10 @@
     <Title title="よくある質問" />
     <section class="body">
       <FaqItem>
-        <template #question>確認メールが届きません。</template>
+        <template #question>ログインできません</template>
         <template #answer
-          >入力いただいたメールアドレスを再度確認した上で、迷惑メールフォルダもご確認下さい。</template
+          >本サービスは、 雙峰祭オンラインシステムと連携動作しています。
+          アカウントやパスワードは、雙峰祭オンラインシステムと同様です。また、同システム上で「責任者」または「副責任者」となっている企画のみ編集できます。</template
         >
       </FaqItem>
       <FaqItem>
@@ -16,9 +17,9 @@
         >
         <template #answer
           >いいえ。動画は必ず YouTube
-          にアップロードした上で、コンテンツ投稿システム上に埋め込んで下さい。このような手順を踏んで頂く理由は、動画ファイルは容量が大きく、安定した配信を行うために
-          YouTube を利用するのが最適だからです。</template
-        >
+          にアップロードした上で、コンテンツ投稿システム上に埋め込んで下さい。
+          動画ファイルは容量が大きいため、YouTubeの基盤を利用することで安定した配信が望めます。
+        </template>
       </FaqItem>
     </section>
   </div>

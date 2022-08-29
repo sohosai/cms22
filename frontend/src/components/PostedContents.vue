@@ -5,36 +5,37 @@
     <div class="settings">
       <div class="settings_title">表示設定</div>
       <Checkbox
-        v-model="showUnAuditable"
-        label="現在審査可能ではないコンテンツも表示"
+        v-model="showNotPending"
+        label="現在審査待ちではないコンテンツも表示"
       />
+
       <HintTip>
-        編集可能期間中の記事など、現在審査できない記事も表示します。
+        これまでに提出されたことがないまたはすでに審査済みなどで、現在審査待ちでない企画も表示します。
       </HintTip>
-      <br />
-      <Checkbox v-model="showAudited" label="承認済みのコンテンツも表示" />
-      <br />
+
       <br />
       表示する企画区分の種類
-      <template v-for="category in categoryFilter" :key="category.value">
-        <br /><Checkbox v-model="category.show" :label="category.label" />
+      <template v-for="item in categoryFilter" :key="item.category">
+        <br /><Checkbox v-model="item.show" :label="item.category" />
       </template>
     </div>
-    <div v-for="article in articles" :key="article.title" class="article">
+    <div
+      v-for="article in articles"
+      :key="article.project_code"
+      class="article"
+    >
       <template
         v-if="
-          (contentCategory.find((v) => v.value === article?.category)
-            ?.deadline < new Date() ||
-            showUnAuditable ||
-            article.category.endsWith('auditor')) &&
-          (article.state !== 'verified' || showAudited) &&
-          categoryFilter.find((v) => v.category === article.category)?.show
+          categoryFilter.find(
+            (item) => item.category === article.project_category
+          )?.show &&
+          (showNotPending || article.status == 'Pending')
         "
       >
         <CardArticle
           :article="article"
           @click="handleArticleClick"
-          action="検閲"
+          action="審査"
         />
       </template>
     </div>
@@ -44,7 +45,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { getContents } from '@/utls/getContents'
-import { contentCategory, paths } from '@/const/config'
+import { paths } from '@/const/config'
 import { useRouter } from 'vue-router'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import CardArticle from './CardArticle.vue'
@@ -69,26 +70,32 @@ export default defineComponent({
         path: paths.postedContents.path(),
       },
     ])
-    const { articles } = await getContents()
-    const handleArticleClick = (articleId: string) => {
-      router.push(paths.auditArticle.path(articleId))
+    const articles = await getContents()
+    const handleArticleClick = (projectCode: string) => {
+      router.push(paths.auditArticle.path(projectCode))
     }
-    const showUnAuditable = ref(false)
-    const showAudited = ref(false)
+
+    const categories = [
+      'オンライン一般企画',
+      '対面一般企画',
+      'オンラインステージ企画',
+      '対面ステージ企画',
+      '調理企画',
+      '飲食物取扱い企画',
+    ]
+    const showNotPending = ref(false)
+
     const categoryFilter = ref(
-      contentCategory.map((category) => ({
-        category: category.value,
-        label: category.label,
+      categories.map((category) => ({
+        category,
         show: true,
       }))
     )
     return {
       articles,
-      contentCategory,
       handleArticleClick,
       navigations,
-      showAudited,
-      showUnAuditable,
+      showNotPending,
       categoryFilter,
     }
   },

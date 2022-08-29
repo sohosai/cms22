@@ -2,8 +2,10 @@
   <div class="contact">
     <Breadcrumbs :navigations="navigations" />
     <Title title="お問い合わせ" />
-    現在準備中です。<br />
-    <a mailto="project47th@sohosai.com">project47th@sohosai.com</a
+    本システムは、筑波大学学園祭実行委員会
+    情報メディアシステム局が管理しております。
+    運用には万全を期しておりますが、お気づきの点やご質問のある方は<br />
+    <a mailto="project48th@sohosai.com">project48th@sohosai.com</a
     >までお問い合わせください。
   </div>
 </template>

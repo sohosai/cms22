@@ -3,7 +3,9 @@
     <div id="firebaseui-auth-container"></div>
     <div class="grand">
       <div class="inner">
-        ※「tsukuba.ac.jp」で終わるメールアドレスをご使用ください。
+        アカウントは<a href="https://online.sohosai.com/"
+          >雙峰祭オンラインシステム</a
+        >と共通です。
       </div>
     </div>
   </div>

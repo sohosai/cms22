@@ -1,154 +1,146 @@
 <template>
   <div class="audit-article">
     <Breadcrumbs :navigations="navigations" />
-    <div>
-      <template
-        v-if="
-          contentCategory.find((v) => v.value === article.category)?.deadline <
-            new Date() || article.category.endsWith('auditor')
-        "
-      >
-        <Button
-          v-if="article.state === 'verified'"
-          @click="handleAuditClick('editable')"
-          text="承認を取り消す"
-          :loading="saving"
-        />
-        <Button
-          v-else
-          @click="handleAuditClick('verified')"
-          text="承認する"
-          :loading="saving"
-        />
-      </template>
-      <div v-else>
-        この記事はまだ編集可能期間中なため、承認することができません。
-        <HintTip>
-          編集可能期間中は記事を承認することができません。編集可能中は記事が常に変更される可能性があるためです。
-        </HintTip>
-      </div>
+
+    <Button
+      v-if="article.status === 'Approved'"
+      @click="handleAuditClick('Pending')"
+      text="承認を取り消す"
+      :loading="saving"
+    />
+    <Button
+      v-else-if="article.status === 'Rejected'"
+      @click="handleAuditClick('Pending')"
+      text="却下を取り消す"
+      :loading="saving"
+    />
+    <Button
+      v-else-if="article.status === 'NeverSubmitted'"
+      disabled
+      text="まだ一度も提出されていません"
+      :loading="saving"
+    />
+    <div v-else>
+      <Button
+        @click="handleAuditClick('Approved')"
+        text="承認する"
+        :loading="saving"
+      />
+
+      <Button
+        @click="handleAuditClick('Rejected')"
+        text="却下する"
+        :loading="saving"
+      />
     </div>
+
     <br />
     <Button @click="handleEditClick" text="この記事を管理者として編集する" />
     <div class="section-title">企画内容</div>
     <div class="row">
       <div class="item">企画名</div>
       <div class="value">
-        {{ article.projectName }}
+        {{ article.project_name }}
       </div>
     </div>
     <div class="row">
       <div class="item">企画区分</div>
       <div class="value">
-        {{ contentCategory.find((v) => v.value === article.category)?.label }}
+        {{ article.project_category }}
       </div>
     </div>
     <div class="row">
-      <div class="item">学術企画に属する</div>
+      <div class="item">学術企画</div>
       <div class="value">
-        {{ article.academic ? 'はい' : 'いいえ' }}
+        {{ article.is_academic ? 'はい' : 'いいえ' }}
       </div>
     </div>
+    <div class="row">
+      <div class="item">芸祭企画</div>
+      <div class="value">
+        {{ article.is_art ? 'はい' : 'いいえ' }}
+      </div>
+    </div>
+
     <div class="row">
       <div class="item">
-        {{ article.articleType === 'html' ? '記事タイトル' : 'リンクタイトル' }}
-      </div>
-      <div class="value">
-        {{ article.title }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="item">
-        {{ article.articleType === 'html' ? '記事本文' : 'URL' }}
+        {{ article.content_type === 'ArticleContent' ? '記事本文' : 'URL' }}
       </div>
       <div class="value">
         <div
-          v-if="article.articleType === 'html'"
+          v-if="article.content_type === 'ArticleContent'"
           v-html="sanitizedHtml"
           class="article-body"
         ></div>
         <div v-else>
-          <a :href="article.url">{{ article.url }}</a>
+          <a :href="article.content_url">{{ article.content_url }}</a>
         </div>
       </div>
     </div>
     <div class="section-title">企画者情報</div>
     <div class="row">
-      <div class="item">企画者名</div>
-      <div class="value">{{ authorProfile.name }}</div>
+      <div class="item">責任者</div>
+      <div class="value">{{ ownerProfile.name }}</div>
     </div>
     <div class="row">
-      <div class="item">企画者連絡先</div>
-      <div class="value">{{ authorProfile.email }}</div>
-    </div>
-    <div class="row">
-      <div class="item">メールが認証済みか</div>
-      <div class="value">
-        {{ authorProfile.verified ? 'はい' : 'いいえ' }}
-        <div v-if="!authorProfile.verified">
-          なりすましの可能性があります。メールを認証するよう催促することをおすすめします。
-        </div>
-      </div>
+      <div class="item">責任者連絡先</div>
+      <div class="value">{{ ownerProfile.email }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import 'firebase/firestore'
-import { contentCategory, paths } from '@/const/config'
-import { ContentState, isURLArticle } from '@/types/type'
+import { paths } from '@/const/config'
 import { defineComponent, ref } from 'vue'
-import { fetchUserProfile } from '@/utls/fetchUserProfile'
-import { getArticleById } from '@/utls/getArticleById'
+import { getContentByPj } from '@/utls/getContentByPj'
 import { sanitizeHtml } from '@/utls/sanitizeHtml'
-import { updateArticleState } from '@/utls/updateArticleState'
+import { updateContentState } from '@/utls/updateContentState'
 import { useRoute, useRouter } from 'vue-router'
+import { ReviewState } from '@/types/type'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Button from '@/components/Button.vue'
-import HintTip from '@/components/HintTip.vue'
 
 export default defineComponent({
   components: {
     Button,
-    HintTip,
     Breadcrumbs,
   },
   async setup() {
     const route = useRoute()
     const router = useRouter()
-    const articleId = String(route.params.id)
-    const article = await getArticleById(articleId)
-    let sanitizedHtml = ''
-    if (!isURLArticle(article)) {
-      sanitizedHtml = sanitizeHtml(article.contentHtml)
-    }
+    const projectCode = String(route.params.id)
+    const article = await getContentByPj(projectCode)
+    const sanitizedHtml = sanitizeHtml(article.content_html)
+
     const navigations = ref([
       {
         label: paths.postedContents.label(),
         path: paths.postedContents.path(),
       },
       {
-        label: paths.auditArticle.label(article.title),
-        path: paths.auditArticle.path(String(articleId)),
+        label: paths.auditArticle.label(
+          `[${article.project_code}] ${article.project_name}`
+        ),
+        path: paths.auditArticle.path(String(article.project_code)),
       },
     ])
     console.log(article)
-    const res = await fetchUserProfile(article.authorId)
-    const authorProfile = res.profile
+    const ownerProfile = article.owner
     const saving = ref(false)
     const handleEditClick = () => {
-      router.push(paths.editArticle.path(article.id))
+      router.push(paths.editArticle.path(article.project_code))
     }
-    const handleAuditClick = async (state: ContentState) => {
+
+    const handleAuditClick = async (state: ReviewState) => {
       saving.value = true
-      await updateArticleState(article.authorId, articleId, state)
+      await updateContentState(article.project_code, state)
       saving.value = false
       window.location.reload()
     }
+
     return {
       article,
-      authorProfile,
-      contentCategory,
+      ownerProfile,
       handleAuditClick,
       handleEditClick,
       navigations,

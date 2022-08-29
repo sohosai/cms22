@@ -8,27 +8,13 @@
       <div class="account">
         <template v-if="user">
           <div>
-            <div class="account_item display-name">{{ user.displayName }}</div>
+            <div class="account_item display-name">{{ displayName }}</div>
             <div class="account_item email">{{ user.email }}</div>
-            <div v-if="!user.emailVerified" class="account_item">
-              <span class="email-verified-alert"
-                >メールアドレスを認証して下さい。</span
-              >
-              <HintTip color="white"
-                >{{
-                  user.email
-                }}
-                にメールアドレス認証用の確認メールをお送りしました。メールアドレスが未認証の状態だと、投稿コンテンツが却下される場合があります。</HintTip
-              >
-              <button @click="handleResendButton">
-                {{ resendButtonText }}
-              </button>
-            </div>
           </div>
           <span class="material-icons" @click="signout">logout</span>
         </template>
         <button class="login" v-else @click="$router.push(paths.signin.path())">
-          ログイン
+          サインイン
           <span class="material-icons">login</span>
         </button>
       </div>
@@ -60,18 +46,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import firebase from 'firebase'
 import 'firebase/auth'
 import { useRouter } from 'vue-router'
 import { paths } from '@/const/config'
 import { getUser } from '@/utls/getUser'
-import HintTip from './HintTip.vue'
+import { getMyProfile } from '@/utls/getMyProfile'
 
 export default defineComponent({
-  components: {
-    HintTip,
-  },
   async setup() {
     const router = useRouter()
     const menu = [
@@ -89,8 +72,9 @@ export default defineComponent({
       { label: paths.contact.label(), link: paths.contact.path() },
     ]
     const user = getUser()
-    const result = await user?.getIdTokenResult()
-    const isAuditor = result?.claims.auditor || false
+    const me = await getMyProfile()
+    const isAuditor = me.is_committee
+    const displayName = me.name
     const signout = async () => {
       firebase.auth().onIdTokenChanged(async () => {
         try {
@@ -101,11 +85,6 @@ export default defineComponent({
         }
       })
     }
-    const resendButtonText = ref('認証メールを再送信')
-    const handleResendButton = async () => {
-      resendButtonText.value = '送信しました'
-      await firebase.auth().currentUser?.sendEmailVerification()
-    }
 
     return {
       menu,
@@ -113,9 +92,8 @@ export default defineComponent({
       signout,
       user,
       paths,
-      handleResendButton,
-      resendButtonText,
       isAuditor,
+      displayName,
     }
   },
 })

@@ -1,8 +1,10 @@
 <template>
   <div class="card-article">
-    <div class="title">{{ article.title }}</div>
+    <div class="title">
+      {{ `[${article.project_code}] ${article.project_name}` }}
+    </div>
     <div class="sup status">
-      <div class="label">ステータス</div>
+      <div class="label">状態</div>
       <div>
         <span>{{ articleStatus }}</span>
         <HintTip>
@@ -21,16 +23,12 @@
     <div class="sup category">
       <div class="label">企画区分</div>
       <div>
-        {{
-          contentCategory.find(
-            (category) => category.value === article.category
-          )?.label
-        }}
+        {{ article.project_category }}
       </div>
     </div>
     <div class="sup update-at">
       <div class="label">最終更新日</div>
-      <div>{{ article.updateAt.toLocaleString() }}</div>
+      <div>{{ article.updated_at.toLocaleString() }}</div>
     </div>
     <div class="action">
       <Button
@@ -44,15 +42,14 @@
 </template>
 
 <script lang="ts">
-import { ArticleOverview } from '@/types/type'
+import { Article } from '@/types/type'
 import { contentState } from '@/const/config'
 import { defineComponent, PropType } from 'vue'
-import { contentCategory } from '@/const/config'
 import Button from './Button.vue'
 import HintTip from './HintTip.vue'
 
 type Props = {
-  article: ArticleOverview
+  article: Article
 }
 
 export default defineComponent({
@@ -62,7 +59,7 @@ export default defineComponent({
   },
   props: {
     article: {
-      type: Object as PropType<ArticleOverview>,
+      type: Object as PropType<Article>,
       required: true,
     },
     action: {
@@ -73,16 +70,15 @@ export default defineComponent({
   emits: ['click'],
   setup(props: Props, context) {
     const articleStatus = contentState.find(
-      (v) => v.value === props.article.state
+      (v) => v.value === props.article.status
     )?.label
     const handleClick = () => {
-      context.emit('click', props.article.id)
+      context.emit('click', props.article.project_code)
     }
 
     return {
       articleStatus,
       handleClick,
-      contentCategory,
     }
   },
 })
