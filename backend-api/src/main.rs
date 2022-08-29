@@ -29,7 +29,7 @@ async fn main() -> Result<()> {
     info!("Listening on port 3030");
 
     warp::serve(filters::filter(&config))
-        .run(([127, 0, 0, 1], 3030))
+        .run(([0, 0, 0, 0], 3030))
         .await;
 
     Ok(())
