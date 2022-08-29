@@ -8,7 +8,7 @@ use anyhow::{anyhow, Result};
 pub async fn is_editable(config: &Config, project_code: &str) -> Result<bool> {
     let is_in_update_period = check_update_period(config).await?;
     if is_in_update_period {
-        return Ok(true)
+        return Ok(true);
     }
 
     let project = get_contents(

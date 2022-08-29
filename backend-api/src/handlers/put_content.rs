@@ -52,12 +52,10 @@ pub async fn run(
         ));
     }
 
-    
-
-    if !me.role.is_committee(){
-        let pj_is_editable = match is_editable(&config, &project_code).await{
-            Ok(b)=>b,
-            Err(e)=>{
+    if !me.role.is_committee() {
+        let pj_is_editable = match is_editable(&config, &project_code).await {
+            Ok(b) => b,
+            Err(e) => {
                 error!("Failed to check editable: {}", e);
                 return Ok(warp::reply::with_status(
                     warp::reply::json(&Message::new("編集権限を確認できませんでした。")),
