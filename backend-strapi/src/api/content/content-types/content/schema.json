@@ -51,6 +51,11 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "editable": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }
