@@ -2,7 +2,7 @@ use crate::sos_data::get_project_by_code;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::sos_data::{self, ProjectRecord};
+use crate::sos_data;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct Config {

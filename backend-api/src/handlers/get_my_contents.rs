@@ -1,5 +1,5 @@
 use crate::model::{Config, Content, Message, User};
-use crate::sos_data::{get_project_by_code, get_project_by_user, get_user};
+use crate::sos_data::{get_project_by_user, get_user};
 use crate::strapi;
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;

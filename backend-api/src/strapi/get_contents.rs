@@ -2,6 +2,7 @@ use super::model::read::{GetContents, GetContentsItem};
 use crate::model::Config;
 use anyhow::{Context, Result};
 
+#[derive(Debug)]
 pub struct GetContentsConfig {
     pub project_code: Option<String>,
     pub is_committee: Option<bool>,
@@ -12,14 +13,14 @@ impl GetContentsConfig {
         let mut query = Vec::new();
         if let Some(project_code) = &self.project_code {
             query.push((
-                "filters[project_code][$eq]".to_string(),
+                "filters[$or][0][project_code][$eq]".to_string(),
                 project_code.to_string(),
             ));
         }
 
         if self.is_committee.unwrap_or(false) {
             query.push((
-                "filters[project_code][$startsWith]".to_string(),
+                format!("filters[$or][{}][project_code][$startsWith]",query.len()),
                 "H".to_string(),
             ));
         }
@@ -32,6 +33,8 @@ pub async fn get_contents(
     config: &Config,
     option: &GetContentsConfig,
 ) -> Result<Vec<GetContentsItem>> {
+    info!("Searching contents matching {:?}", option);
+
     let client = reqwest::Client::new();
     let (items, page_count) = get_contents_in_page(&client, config, option, 1).await?;
 
@@ -51,6 +54,7 @@ pub async fn get_contents(
         items.extend(page_items);
     }
 
+    info!("{} items found.",items.len());
     Ok(items)
 }
 
