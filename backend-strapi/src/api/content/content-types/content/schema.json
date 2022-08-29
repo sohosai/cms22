@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contents",
+  "info": {
+    "singularName": "content",
+    "pluralName": "contents",
+    "displayName": "content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "project_code": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "content_type": {
+      "type": "enumeration",
+      "enum": [
+        "LinkContent",
+        "ArticleContent"
+      ],
+      "default": "LinkContent",
+      "required": true
+    },
+    "content_url": {
+      "type": "string",
+      "required": false
+    },
+    "content_html": {
+      "type": "richtext"
+    },
+    "review_status": {
+      "type": "enumeration",
+      "enum": [
+        "NeverSubmitted",
+        "Pending",
+        "Approved",
+        "Rejected"
+      ],
+      "default": "NeverSubmitted",
+      "required": true
+    },
+    "thumbnail": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

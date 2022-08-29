@@ -1,0 +1,20 @@
+{
+  "kind": "singleType",
+  "collectionName": "metas",
+  "info": {
+    "singularName": "meta",
+    "pluralName": "metas",
+    "displayName": "meta"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "initialized": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    }
+  }
+}
