@@ -19,7 +19,7 @@ pub async fn is_editable(config: &Config, project_code: &str) -> Result<bool> {
         },
     )
     .await?;
-    if (project.len() != 1) {
+    if project.len() != 1 {
         return Err(anyhow!(
             "Not exactly one content found for project_code {}",
             project_code

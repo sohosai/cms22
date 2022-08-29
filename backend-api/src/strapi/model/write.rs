@@ -1,4 +1,4 @@
-use super::{ContentType, ReviewStatus, Thumbnail};
+use super::{ContentType, ReviewStatus};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
