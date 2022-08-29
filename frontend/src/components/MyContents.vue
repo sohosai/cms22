@@ -13,6 +13,9 @@
         @click="handleEditArticle"
       />
     </div>
+    <div v-if="is_committee" class="committee-note">
+      <p>※ 実委人にのみ、本部企画もあわせて表示されています。</p>
+    </div>
   </div>
 </template>
 
@@ -25,6 +28,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import CardArticle from '@/components/CardArticle.vue'
 import Title from './Title.vue'
 import { getUser } from '@/utls/getUser'
+import { getMyProfile } from '@/utls/getMyProfile'
 
 export default defineComponent({
   components: {
@@ -48,10 +52,13 @@ export default defineComponent({
       router.push(paths.editArticle.path(projectCode))
     }
 
+    const me=await getMyProfile();
+    const is_committee = me.is_committee;
     return {
       handleEditArticle,
       navigations,
       articles,
+      is_committee
     }
   },
 })
@@ -66,6 +73,9 @@ export default defineComponent({
   margin-bottom: 2rem;
 }
 .create-button {
+  margin-top: 2rem;
+}
+.committee-note{
   margin-top: 2rem;
 }
 </style>
