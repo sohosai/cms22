@@ -11,5 +11,5 @@ export const getContentsByUser = async (): Promise<Article[]> => {
   const authHeader = `Bearer ${idToken}`
   const response = await fetch(url, { headers: { Authorization: authHeader } })
   const body = await response.json()
-  return body.content
+  return body.contents
 }
