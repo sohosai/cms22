@@ -67,7 +67,11 @@ pub async fn run_init(config: &Config) -> Result<()> {
     }
 
     // Mark as initialized
-    let meta = Meta { initialized: true };
+    let meta = Meta {
+        initialized: true,
+        allow_edit_since: None,
+        allow_edit_until: None,
+    };
     client
         .put(format!("{}/api/meta", config.strapi_base))
         .bearer_auth(&config.strapi_token)

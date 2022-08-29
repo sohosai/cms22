@@ -1,5 +1,6 @@
 use crate::model::{Config, Message, User};
 use crate::sos_data::{get_project_by_user, get_user};
+use crate::strapi::is_editable;
 use crate::strapi::{
     model::{write::Content, ReviewStatus},
     update_content,
@@ -23,6 +24,7 @@ impl Input {
             content_html: Some(self.content_html),
             content_url: Some(self.content_url),
             review_status: Some(Some(ReviewStatus::Pending)),
+            editable: None,
         }
     }
 }
@@ -48,6 +50,28 @@ pub async fn run(
             warp::reply::json(&Message::new("権限がありません")),
             warp::http::StatusCode::FORBIDDEN,
         ));
+    }
+
+    
+
+    if !me.role.is_committee(){
+        let pj_is_editable = match is_editable(&config, &project_code).await{
+            Ok(b)=>b,
+            Err(e)=>{
+                error!("Failed to check editable: {}", e);
+                return Ok(warp::reply::with_status(
+                    warp::reply::json(&Message::new("編集権限を確認できませんでした。")),
+                    warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+                ));
+            }
+        };
+
+        if !pj_is_editable {
+            return Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new("期間外です")),
+                warp::http::StatusCode::FORBIDDEN,
+            ));
+        }
     }
 
     match update_content(&config, &project_code, &input.into_strapi(&project_code)).await {

@@ -46,6 +46,7 @@ pub struct GetContentsItem {
     pub content_html: Option<String>,
     pub content_url: Option<String>,
     pub thumbnail: SingleGetData<super::Thumbnail>,
+    pub editable: bool,
     #[serde(rename = "createdAt")]
     pub created_at: DateTime<Utc>,
     #[serde(rename = "updatedAt")]

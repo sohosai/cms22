@@ -1,7 +1,8 @@
 use super::{ContentType, ReviewStatus, Thumbnail};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-// Outside Option is to indicate if that field is omitted(don't cange) and inner one means the
+// Outer Option is to indicate if that field is omitted(don't cange) and inner one means the
 // value is null or some value
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -18,6 +19,8 @@ pub struct Content {
     pub content_url: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub review_status: Option<Option<ReviewStatus>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub editable: Option<bool>,
 }
 
 impl Content {
@@ -29,6 +32,7 @@ impl Content {
             content_html: None,
             content_url: None,
             review_status: Some(Some(ReviewStatus::NeverSubmitted)),
+            editable: Some(false),
         }
     }
 }
@@ -36,6 +40,10 @@ impl Content {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Meta {
     pub initialized: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allow_edit_since: Option<DateTime<Utc>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allow_edit_until: Option<DateTime<Utc>>,
 }
 
 /*

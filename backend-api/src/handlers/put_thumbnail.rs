@@ -1,3 +1,4 @@
+use crate::strapi::is_editable;
 use crate::model::{Config, Message, User};
 use crate::sos_data::{get_project_by_user, get_user};
 use crate::strapi::{
@@ -41,6 +42,27 @@ pub async fn run(
         ));
     }
 
+    if !me.role.is_committee(){
+        let pj_is_editable = match is_editable(&config, &project_code).await{
+            Ok(b)=>b,
+            Err(e)=>{
+                error!("Failed to check editable: {}", e);
+                return Ok(warp::reply::with_status(
+                    warp::reply::json(&Message::new("編集権限を確認できませんでした。")),
+                    warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+                ));
+            }
+        };
+
+        if !pj_is_editable {
+            return Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new("期間外です")),
+                warp::http::StatusCode::FORBIDDEN,
+            ));
+        }
+    }
+    
+
     let filename = format!(
         "thumbnail_{}_{}",
         project_code,
@@ -78,6 +100,7 @@ pub async fn run(
             content_url: None,
             review_status: Some(Some(ReviewStatus::Pending)),
             thumbnail: Some(Some(id)),
+            editable: None,
         },
     )
     .await;

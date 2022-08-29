@@ -4,16 +4,27 @@
   "info": {
     "singularName": "meta",
     "pluralName": "metas",
-    "displayName": "meta"
+    "displayName": "meta",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
     "initialized": {
       "type": "boolean",
       "default": false,
+      "required": true
+    },
+    "allow_edit_since": {
+      "type": "datetime",
+      "required": true,
+      "default": "2022-08-31T15:00:00.000Z"
+    },
+    "allow_edit_until": {
+      "type": "datetime",
+      "default": "2022-09-30T14:59:00.000Z",
       "required": true
     }
   }
