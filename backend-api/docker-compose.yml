@@ -1,0 +1,24 @@
+version: '3'
+services:
+  api:
+    ports:
+      - "3030:3030"
+    volumes:
+      - ./data:/usr/src/backend-api/data
+    environment:
+      - VIRTUAL_HOST=api.cms.sohosai.com
+      - LETSENCRYPT:HOST=api.cms.sohosai.com
+      - ETSENCRYPT_EMAIL=api.cms.sohosai.com
+      - VIRTUAL_PORT=3030
+      - HTTPS_METHOD=redirect
+      - SOS_USERS_CSV=data/sos-users.csv
+      - SOS_PROJECTS_CSV=data/sos-projects.csv
+      - STRAPI_TOKEN
+      - STRAPI_BASE
+      - RUST_LOG=info
+    build:
+      context: .
+      dockerfile: Dockerfile
+networks:
+  default:
+    name: shared
