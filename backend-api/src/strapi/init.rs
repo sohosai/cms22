@@ -22,7 +22,12 @@ pub async fn check_if_initialized(config: &Config) -> Result<bool> {
 
     let meta = result.json::<SingleGetData<Meta>>().await?;
     info!("Meta document found. Initialized: {:?}", &meta);
-    Ok(meta.data.unwrap().attributes.initialized)
+
+    if meta.data.is_some() {
+        Ok(meta.data.unwrap().attributes.initialized)
+    } else {
+        Ok(false)
+    }
 }
 
 pub async fn run_init(config: &Config) -> Result<()> {
