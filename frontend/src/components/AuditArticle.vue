@@ -1,41 +1,6 @@
 <template>
   <div class="audit-article">
     <Breadcrumbs :navigations="navigations" />
-
-    <Button
-      v-if="article.status === 'Approved'"
-      @click="handleAuditClick('Pending')"
-      text="承認を取り消す"
-      :loading="saving"
-    />
-    <Button
-      v-else-if="article.status === 'Rejected'"
-      @click="handleAuditClick('Pending')"
-      text="却下を取り消す"
-      :loading="saving"
-    />
-    <Button
-      v-else-if="article.status === 'NeverSubmitted'"
-      disabled
-      text="まだ一度も提出されていません"
-      :loading="saving"
-    />
-    <div v-else>
-      <Button
-        @click="handleAuditClick('Approved')"
-        text="承認する"
-        :loading="saving"
-      />
-
-      <Button
-        @click="handleAuditClick('Rejected')"
-        text="却下する"
-        :loading="saving"
-      />
-    </div>
-
-    <br />
-    <Button @click="handleEditClick" text="この記事を管理者として編集する" />
     <div class="section-title">企画内容</div>
     <div class="row">
       <div class="item">企画名</div>
@@ -66,6 +31,7 @@
       <div class="item">
         {{ article.content_type === 'ArticleContent' ? '記事本文' : 'URL' }}
       </div>
+    
       <div class="value">
         <div
           v-if="article.content_type === 'ArticleContent'"
@@ -76,6 +42,11 @@
           <a :href="article.content_url">{{ article.content_url }}</a>
         </div>
       </div>
+<div class="btn-wrapper">
+  <Button @click="handleEditClick" text="この記事を管理者として編集する" />
+</div>
+     
+
     </div>
     <div class="section-title">企画者情報</div>
     <div class="row">
@@ -87,6 +58,41 @@
       <div class="value">{{ ownerProfile.email }}</div>
     </div>
   </div>
+
+    <Button
+      v-if="article.status === 'Approved'"
+      @click="handleAuditClick('Pending')"
+      text="承認を取り消す"
+      :loading="saving"
+    />
+    <Button
+      v-else-if="article.status === 'Rejected'"
+      @click="handleAuditClick('Pending')"
+      text="却下を取り消す"
+      :loading="saving"
+    />
+    <Button
+      v-else-if="article.status === 'NeverSubmitted'"
+      disabled
+      text="まだ一度も提出されていません"
+      :loading="saving"
+    />
+    <div v-else class="row">
+      <Button
+        @click="handleAuditClick('Approved')"
+        text="承認する"
+        :loading="saving"
+        class="btn-wrapper"
+      />
+
+      <Button
+        @click="handleAuditClick('Rejected')"
+        text="却下する"
+        :loading="saving"
+        class="btn-wrapper"
+      />
+    </div>
+    
 </template>
 
 <script lang="ts">
@@ -159,7 +165,9 @@ export default defineComponent({
 }
 .row {
   padding: 2rem 0;
+  flex-direction: column;
 }
+
 .item {
   @include fs-0b;
   margin-bottom: 1rem;
@@ -172,5 +180,9 @@ export default defineComponent({
   background: $c-white;
   padding: 1rem;
   border-radius: 0.5rem;
+}
+
+.btn-wrapper{
+  margin: 10px;
 }
 </style>

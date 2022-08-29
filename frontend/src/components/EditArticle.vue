@@ -8,6 +8,11 @@
       </div>
     </div>
 
+    <div class="wrap">
+      <div class="heading">掲載タイプ</div>
+      <Select v-model="contentType" :options="contentTypeOptions" />
+    </div>
+
     <div class="wrap content-wrap">
       <template v-if="contentType == 'ArticleContent'">
         <div class="heading">記事本文</div>
@@ -18,11 +23,20 @@
           contentType="html"
         />
       </template>
-      <template v-else-if="articleType == 'LinkContent'">
+      <template v-else-if="contentType == 'LinkContent'">
         <div class="heading">リンク先URL</div>
         <FieldText v-model="contentUrl" />
       </template>
     </div>
+
+    <div class="wrap title-wrap">
+      <div class="heading">
+        サムネイル
+        <HintTip>企画一覧ページで利用することがあります。</HintTip>
+      </div>
+      <PreviewImage @inputImage="handleInputImage" :image="thumbnailUrl" />
+    </div>
+
     <div class="wrap">
       <div v-if="saveAnnotation !== ''" class="deadline-note">
         {{ saveAnnotation }}
@@ -33,14 +47,6 @@
         :text="saveButtonText"
         :loading="saving"
       />
-    </div>
-
-    <div class="wrap title-wrap">
-      <div class="heading">
-        サムネイル
-        <HintTip>企画一覧ページで利用することがあります。</HintTip>
-      </div>
-      <PreviewImage @inputImage="handleInputImage" :image="thumbnailUrl" />
     </div>
   </div>
 </template>
@@ -62,6 +68,7 @@ import FieldText from '@/components/FieldText.vue'
 import HintTip from './HintTip.vue'
 import PreviewImage from '@/components/PreviewImage.vue'
 import { checkSaveAbility } from '@/utls/checkSaveAbility'
+import Select from './Select.vue'
 
 export default defineComponent({
   components: {
@@ -71,6 +78,7 @@ export default defineComponent({
     HintTip,
     QuillEditor,
     PreviewImage,
+    Select,
   },
   async setup() {
     onMounted(() => {
@@ -205,6 +213,18 @@ export default defineComponent({
     const contentUrl = ref(article.content_url)
     const contentType = ref(article.content_type)
 
+    const contentTypeOptions = [
+      {
+        value: 'LinkContent',
+        label:
+          'リンク - ご自身でご用意いただいた外部サイトへのリンクを掲載します',
+      },
+      {
+        value: 'ArticleContent',
+        label: '記事 - 本システム上で執筆した記事を掲載します',
+      },
+    ]
+
     let thumbnail = new Blob()
     const thumbnailUrl = article.thumbnail
 
@@ -271,6 +291,7 @@ export default defineComponent({
       toggleApplied,
       saveAnnotation,
       saveable,
+      contentTypeOptions,
     }
   },
 })
@@ -285,7 +306,7 @@ export default defineComponent({
   margin-bottom: 1rem;
 }
 
-.project-name{
+.project-name {
   font-size: 1.5em;
   font-weight: bold;
 }

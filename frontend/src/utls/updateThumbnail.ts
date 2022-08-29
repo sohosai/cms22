@@ -9,11 +9,11 @@ export const updateThumbnail = async (
   const idToken = await firebase.auth().currentUser?.getIdToken(true)
   const authHeader = `Bearer ${idToken}`
 
-  const mime=thumbnail.type;
-  const dataURL = await convBlobToBase64(thumbnail);
+  const mime = thumbnail.type
+  const dataURL = await convBlobToBase64(thumbnail)
   console.log(dataURL)
-  const regex=new RegExp(`data:${mime};base64,`);
-  const base64 = dataURL.replace(regex, "");
+  const regex = new RegExp(`data:${mime};base64,`)
+  const base64 = dataURL.replace(regex, '')
 
   const data = {
     mime: mime,
