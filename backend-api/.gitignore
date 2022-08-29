@@ -3,3 +3,5 @@ debug/
 
 Cargo.lock
 **/*.rs.bk
+data
+.envrc

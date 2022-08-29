@@ -1,0 +1,74 @@
+use crate::model::{Config, Message, User};
+use crate::sos_data::{get_project_by_user, get_user};
+use crate::strapi::{
+    model::{write::Content, ReviewStatus},
+    update_content,
+};
+use serde::{Deserialize, Serialize};
+use std::convert::Infallible;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Input {
+    pub content_type: crate::strapi::model::ContentType,
+    pub content_html: Option<String>,
+    pub content_url: Option<String>,
+}
+
+impl Input {
+    fn into_strapi(self, project_code: &str) -> Content {
+        Content {
+            content_type: Some(self.content_type),
+            project_code: Some(project_code.to_string()),
+            thumbnail: None,
+            content_html: Some(self.content_html),
+            content_url: Some(self.content_url),
+            review_status: Some(Some(ReviewStatus::Pending)),
+        }
+    }
+}
+
+pub async fn run(
+    config: Config,
+    user: User,
+    project_code: String,
+    input: Input,
+) -> Result<impl warp::Reply, Infallible> {
+    info!("Updating content of {} by {}", project_code, user.user_id);
+
+    let me = get_user(&config, &user.user_id).unwrap().unwrap();
+    let my_project = get_project_by_user(&config, &user.user_id).unwrap();
+
+    let is_my_project = match my_project {
+        Some(project) => project.project_code == project_code,
+        None => false,
+    };
+
+    if !is_my_project && !me.role.is_committee() {
+        return Ok(warp::reply::with_status(
+            warp::reply::json(&Message::new("権限がありません")),
+            warp::http::StatusCode::FORBIDDEN,
+        ));
+    }
+
+    match update_content(&config, &project_code, &input.into_strapi(&project_code)).await {
+        Ok(_) => {
+            info!(
+                "Succeed to update content of {} by {}.",
+                project_code, user.user_id
+            );
+            Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new("success")),
+                warp::http::StatusCode::OK,
+            ))
+        }
+        Err(e) => {
+            error!("Error while updating content: {}", e);
+            Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new(
+                    "You have right permission, but something went wrong updating content.",
+                )),
+                warp::http::StatusCode::INTERNAL_SERVER_ERROR,
+            ))
+        }
+    }
+}
