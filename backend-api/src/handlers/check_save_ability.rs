@@ -27,8 +27,19 @@ struct Output {
 pub async fn run(
     config: Config,
     user: User,
-    project_code: String,
+    project_code_uriencoded: String,
 ) -> Result<impl warp::Reply, Infallible> {
+    let project_code = match urlencoding::decode(&project_code_uriencoded) {
+        Ok(project_code) => project_code,
+        Err(e) => {
+            error!("Error while decoding project_code: {}", e);
+            return Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new(&format!("Error while decoding project_code"))),
+                warp::http::StatusCode::BAD_REQUEST,
+            ));
+        }
+    };
+
     info!(
         "Check save ability for {} by {}",
         project_code, &user.user_id

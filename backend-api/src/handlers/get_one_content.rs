@@ -20,9 +20,20 @@ struct Output {
 
 pub async fn run(
     config: Config,
-    project_code: String,
+    project_code_uriencoded: String,
     user: User,
 ) -> Result<impl warp::Reply, Infallible> {
+    let project_code = match urlencoding::decode(&project_code_uriencoded) {
+        Ok(project_code) => project_code,
+        Err(e) => {
+            error!("Error while decoding project_code: {}", e);
+            return Ok(warp::reply::with_status(
+                warp::reply::json(&Message::new(&format!("Error while decoding project_code"))),
+                warp::http::StatusCode::BAD_REQUEST,
+            ));
+        }
+    };
+
     let me = get_user(&config, &user.user_id).unwrap().unwrap();
     let my_project = get_project_by_user(&config, &user.user_id).unwrap();
 
