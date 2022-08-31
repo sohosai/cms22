@@ -132,8 +132,8 @@ impl Into<crate::model::UserProfile> for UserRecord {
             email: self.email,
             name: format!(
                 "{} {}",
-                self.family_name.to_string(),
-                self.given_name.to_string()
+                self.family_name,
+                self.given_name
             ),
             is_committee: self.role.is_committee(),
         }

@@ -38,7 +38,7 @@ pub async fn run(
         Err(e) => {
             error!("Error while decoding project_code: {}", e);
             return Ok(warp::reply::with_status(
-                warp::reply::json(&Message::new(&format!("Error while decoding project_code"))),
+                warp::reply::json(&Message::new("Error while decoding project_code")),
                 warp::http::StatusCode::BAD_REQUEST,
             ));
         }

@@ -4,7 +4,7 @@ use crate::model::Config;
 use anyhow::{anyhow, Result};
 
 pub async fn update_content(config: &Config, project_code: &str, content: &Content) -> Result<()> {
-    let id = get_id_by_project_code(&config, project_code).await?;
+    let id = get_id_by_project_code(config, project_code).await?;
     let put_url = format!("{}/api/contents/{}", config.strapi_base, id);
 
     let req_body = content.for_put();

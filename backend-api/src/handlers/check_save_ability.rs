@@ -1,6 +1,6 @@
-use crate::model::{Config, Content, Message, User};
-use crate::sos_data::{get_project_by_code, get_project_by_user, get_user};
-use crate::strapi;
+use crate::model::{Config, Message, User};
+use crate::sos_data::{get_project_by_user, get_user};
+
 use crate::strapi::check_update_period;
 use crate::strapi::get_contents::get_contents;
 use crate::strapi::get_contents::GetContentsConfig;
@@ -34,7 +34,7 @@ pub async fn run(
         Err(e) => {
             error!("Error while decoding project_code: {}", e);
             return Ok(warp::reply::with_status(
-                warp::reply::json(&Message::new(&format!("Error while decoding project_code"))),
+                warp::reply::json(&Message::new("Error while decoding project_code")),
                 warp::http::StatusCode::BAD_REQUEST,
             ));
         }
@@ -57,7 +57,7 @@ pub async fn run(
         Err(e) => {
             error!("{}", e);
             return Ok(warp::reply::with_status(
-                warp::reply::json(&Message::new(&format!("Coudn't get meta."))),
+                warp::reply::json(&Message::new("Coudn't get meta.")),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ));
         }

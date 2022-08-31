@@ -69,7 +69,7 @@ fn parse_bool_field(s: &str) -> bool {
 
 impl Content {
     pub fn from(item: crate::strapi::model::read::GetContentsItem, config: &Config) -> Self {
-        let project = get_project_by_code(&config, &item.project_code)
+        let project = get_project_by_code(config, &item.project_code)
             .unwrap()
             .unwrap();
 
@@ -78,10 +78,10 @@ impl Content {
             None => None,
         };
 
-        let owner = sos_data::get_user(&config, &project.owner_user_id)
+        let owner = sos_data::get_user(config, &project.owner_user_id)
             .unwrap()
             .unwrap();
-        let subowner = sos_data::get_user(&config, &project.subowner_user_id)
+        let subowner = sos_data::get_user(config, &project.subowner_user_id)
             .unwrap()
             .unwrap();
 

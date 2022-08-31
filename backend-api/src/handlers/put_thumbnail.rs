@@ -27,7 +27,7 @@ pub async fn run(
         Err(e) => {
             error!("Error while decoding project_code: {}", e);
             return Ok(warp::reply::with_status(
-                warp::reply::json(&Message::new(&format!("Error while decoding project_code"))),
+                warp::reply::json(&Message::new("Error while decoding project_code")),
                 warp::http::StatusCode::BAD_REQUEST,
             ));
         }
@@ -76,7 +76,7 @@ pub async fn run(
     let filename = format!(
         "thumbnail_{}_{}",
         project_code,
-        Utc::now().format("%Y-%m-%d_%H-%M-%S").to_string()
+        Utc::now().format("%Y-%m-%d_%H-%M-%S")
     );
 
     let id = match &input.base64 {
@@ -126,12 +126,12 @@ pub async fn run(
     match res {
         Err(e) => {
             error!("Could not update content: {}", e);
-            return Ok(warp::reply::with_status(
+            Ok(warp::reply::with_status(
                 warp::reply::json(&Message::new(
                     "You have right permission, but something went wrong while updating thumbnail",
                 )),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
-            ));
+            ))
         }
         Ok(_) => {
             info!("Updated thumbnail for project {}", project_code);
