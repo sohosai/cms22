@@ -20,7 +20,7 @@ impl GetContentsConfig {
 
         if self.is_committee.unwrap_or(false) {
             query.push((
-                format!("filters[$or][{}][project_code][$startsWith]",query.len()),
+                format!("filters[$or][{}][project_code][$startsWith]", query.len()),
                 "本企".to_string(),
             ));
         }
@@ -54,7 +54,7 @@ pub async fn get_contents(
         items.extend(page_items);
     }
 
-    info!("{} items found.",items.len());
+    info!("{} items found.", items.len());
     Ok(items)
 }
 

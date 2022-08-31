@@ -15,7 +15,7 @@ pub enum ProjectCategory {
     #[serde(rename = "飲食物取扱い企画")]
     FoodPhysical,
     #[serde(rename = "本部企画")]
-    CommitteeProject
+    CommitteeProject,
 }
 
 //FIXME:  Use a suitable type for date and bool.(It occurd parse error so using string for now)

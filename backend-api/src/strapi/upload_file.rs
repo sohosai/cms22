@@ -9,8 +9,12 @@ struct Response {
 }
 
 pub async fn upload_file(config: &Config, name: &str, mime: &str, data: &[u8]) -> Result<u16> {
-    info!("Uploading file {} with content of {} bytes", name, data.len());
-    
+    info!(
+        "Uploading file {} with content of {} bytes",
+        name,
+        data.len()
+    );
+
     let post_url = format!("{}/api/upload", config.strapi_base);
 
     let item = multipart::Part::bytes(data.to_vec())
