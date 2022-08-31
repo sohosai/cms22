@@ -52,13 +52,13 @@ export default defineComponent({
       router.push(paths.editArticle.path(projectCode))
     }
 
-    const me=await getMyProfile();
-    const is_committee = me.is_committee;
+    const me = await getMyProfile()
+    const is_committee = me.is_committee
     return {
       handleEditArticle,
       navigations,
       articles,
-      is_committee
+      is_committee,
     }
   },
 })
@@ -75,7 +75,7 @@ export default defineComponent({
 .create-button {
   margin-top: 2rem;
 }
-.committee-note{
+.committee-note {
   margin-top: 2rem;
 }
 </style>

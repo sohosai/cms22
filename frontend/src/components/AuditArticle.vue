@@ -31,7 +31,7 @@
       <div class="item">
         {{ article.content_type === 'ArticleContent' ? '記事本文' : 'URL' }}
       </div>
-    
+
       <div class="value">
         <div
           v-if="article.content_type === 'ArticleContent'"
@@ -42,11 +42,12 @@
           <a :href="article.content_url">{{ article.content_url }}</a>
         </div>
       </div>
-<div class="btn-wrapper">
-  <Button @click="handleEditClick" text="この記事を管理者として編集する" />
-</div>
-     
-
+      <div class="btn-wrapper">
+        <Button
+          @click="handleEditClick"
+          text="この記事を管理者として編集する"
+        />
+      </div>
     </div>
     <div class="section-title">企画者情報</div>
     <div class="row">
@@ -59,40 +60,39 @@
     </div>
   </div>
 
+  <Button
+    v-if="article.status === 'Approved'"
+    @click="handleAuditClick('Pending')"
+    text="承認を取り消す"
+    :loading="saving"
+  />
+  <Button
+    v-else-if="article.status === 'Rejected'"
+    @click="handleAuditClick('Pending')"
+    text="却下を取り消す"
+    :loading="saving"
+  />
+  <Button
+    v-else-if="article.status === 'NeverSubmitted'"
+    disabled
+    text="まだ一度も提出されていません"
+    :loading="saving"
+  />
+  <div v-else class="row">
     <Button
-      v-if="article.status === 'Approved'"
-      @click="handleAuditClick('Pending')"
-      text="承認を取り消す"
+      @click="handleAuditClick('Approved')"
+      text="承認する"
       :loading="saving"
+      class="btn-wrapper"
     />
-    <Button
-      v-else-if="article.status === 'Rejected'"
-      @click="handleAuditClick('Pending')"
-      text="却下を取り消す"
-      :loading="saving"
-    />
-    <Button
-      v-else-if="article.status === 'NeverSubmitted'"
-      disabled
-      text="まだ一度も提出されていません"
-      :loading="saving"
-    />
-    <div v-else class="row">
-      <Button
-        @click="handleAuditClick('Approved')"
-        text="承認する"
-        :loading="saving"
-        class="btn-wrapper"
-      />
 
-      <Button
-        @click="handleAuditClick('Rejected')"
-        text="却下する"
-        :loading="saving"
-        class="btn-wrapper"
-      />
-    </div>
-    
+    <Button
+      @click="handleAuditClick('Rejected')"
+      text="却下する"
+      :loading="saving"
+      class="btn-wrapper"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -182,7 +182,7 @@ export default defineComponent({
   border-radius: 0.5rem;
 }
 
-.btn-wrapper{
+.btn-wrapper {
   margin: 10px;
 }
 </style>
