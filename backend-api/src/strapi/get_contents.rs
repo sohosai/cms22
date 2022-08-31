@@ -21,7 +21,7 @@ impl GetContentsConfig {
         if self.is_committee.unwrap_or(false) {
             query.push((
                 format!("filters[$or][{}][project_code][$startsWith]",query.len()),
-                "H".to_string(),
+                "本企".to_string(),
             ));
         }
 

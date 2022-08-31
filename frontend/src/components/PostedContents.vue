@@ -82,6 +82,7 @@ export default defineComponent({
       '対面ステージ企画',
       '調理企画',
       '飲食物取扱い企画',
+      '本部企画',
     ]
     const showNotPending = ref(false)
 
