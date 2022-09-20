@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        working-directory: ./backend-api/schema
         with:
           node-version: '16'
           cache: npm
+          cache-dependency-path: backend-api/schema/package-lock.json
       - run: npm run build:doc -- --output dist/api-server.html
         working-directory: ./backend-api/schema
       - uses: peaceiris/actions-gh-pages@v3
