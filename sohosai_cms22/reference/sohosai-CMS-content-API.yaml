@@ -1,0 +1,412 @@
+openapi: 3.1.0
+x-stoplight:
+  id: xd99efmyliw3t
+info:
+  title: sohosai CMS content API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /contents/my:
+    parameters: []
+    get:
+      summary: Get my contents
+      tags: []
+      operationId: get-contents-my
+      description: 'Fetch my contents(if the user is project member), or all contents(In case that user is committee member)'
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Content'
+  '/contents/{project_code}':
+    parameters:
+      - $ref: '#/components/parameters/project_code'
+    get:
+      summary: Get Contents by Project Code
+      operationId: get-contents-by-project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/Content'
+      security:
+        - Bearer: []
+      description: Get contents by project code. Requires sufficient permission.
+    put:
+      summary: Update project content
+      operationId: put-contents-project_code
+      responses: {}
+      security:
+        - Bearer: []
+      description: Update project code. Requires sufficient permission.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content_type:
+                  $ref: '#/components/schemas/ContentType'
+                content_html:
+                  type: string
+                content_url:
+                  type: string
+              required:
+                - content_type
+  /contents/list:
+    get:
+      summary: List all contents
+      operationId: get-contents-list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contents:
+                    $ref: '#/components/schemas/Content'
+      security:
+        - Bearer: []
+      description: List all exisiting contents. Only for committee member.
+  '/contents/{project_code}/review':
+    parameters:
+      - $ref: '#/components/parameters/project_code'
+    put:
+      summary: Review specified contents
+      operationId: put-contents-project_code-review
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  review_status:
+                    $ref: '#/components/schemas/ReviewStatus'
+      security:
+        - Bearer: []
+      description: Only allowed for committee members
+  '/contents/{project_code}/thumbnail':
+    parameters:
+      - $ref: '#/components/parameters/project_code'
+    put:
+      summary: Put thumbnail by project code
+      operationId: put-contents-project_code-thumbnail
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+      description: Project Code
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base64:
+                  type: string
+                  format: binary
+                mime:
+                  type: string
+  '/contents/{project_code}/save-ability':
+    parameters:
+      - $ref: '#/components/parameters/project_code'
+    get:
+      summary: Check my save ability
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_my_project:
+                    type: boolean
+                  in_save_period:
+                    type: boolean
+                  is_editable:
+                    type: boolean
+                  is_committee:
+                    type: boolean
+                  total:
+                    type: boolean
+      operationId: get-contents-project_code-save_ability
+      description: Check if user can save the contents for specified project
+      security:
+        - Bearer: []
+  /me:
+    get:
+      summary: Get my profile
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+      operationId: get-my-profile
+      security:
+        - Bearer: []
+      description: Get user profile.
+  '/annoymous/contents/{project_code}':
+    get:
+      summary: Get public project content
+      tags: []
+      responses: {}
+      operationId: get-annoymous
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  $ref: '#/components/schemas/Content'
+            examples: {}
+    parameters:
+      - $ref: '#/components/parameters/project_code'
+  /anonymous/projects:
+    get:
+      summary: Get public project list
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectMetaData'
+        '500':
+          description: Internal Server Error
+      operationId: get-anonymous-projects
+      description: Generate project list (Supposed to be used for searching/listing)
+components:
+  schemas:
+    Content:
+      title: Content
+      x-stoplight:
+        id: ggfsvh8vabfjp
+      type: object
+      properties:
+        content_type:
+          $ref: '#/components/schemas/ContentType'
+        project_code:
+          type: string
+        thumbnail:
+          type: string
+          description: Thumbnail full URL
+        content_html:
+          type: string
+        content_url:
+          type: string
+        status:
+          $ref: '#/components/schemas/ReviewStatus'
+        owner:
+          $ref: '#/components/schemas/UserProfile'
+        subowner:
+          $ref: '#/components/schemas/UserProfile'
+        project_name:
+          type: string
+        project_category:
+          $ref: '#/components/schemas/ProjectCategory'
+        is_academic:
+          type: boolean
+        is_art:
+          type: boolean
+        created_at:
+          type: boolean
+        updated_at:
+          type: boolean
+    PublicContent:
+      title: PublicContent
+      type: object
+      properties:
+        content_type:
+          $ref: '#/components/schemas/ContentType'
+        project_code:
+          type: string
+        thumbnail:
+          type: string
+          description: Thumbnail full URL
+        content_html:
+          type: string
+          example: "<p>こんにちは！日本マラウイ学生団体です！</p><p>Hi! We are the Japan Malawi Youth Organization!</p><p><br></p><p><strong><em>皆さんは「アフリカ」と聞いて何が浮かびますか？</em></strong></p><p>現在20名が私たちの活動により、少しでも多くの人たちが持つアフリカや途上国に対するイメージが豊かになることを願って、それぞれのプロジェクトに精一取り組んでいます。</p><p>What does “Africa” remind you of ?</p><p>Currently each one of our 20 members are working on different projects with our best efforts and striving to promote people understanding about Africa and developing nations.</p><p><br></p><p>マラウイ共和国は、北部はタンザニア、ルワンダ、南東部はモザンビークに接する、東アフリカの内陸国です。</p><p>世界最貧国の１つとして知られる一方、穏やかで温かい国民性から \"Warm Heart of Africa”という愛称がある国です\U0001F493</p><p>The Republic of Malawi is a landlocked East African country bordered by Tanzania and Rwanda in the north and Mozambique in the southeast.</p><p>While it is known as one of the poorest countries in the world, it is also known as the \"Warm Heart of Africa\" for its gentle and warm people\U0001F493</p><p><br></p><h2><strong style=\"color: rgb(255, 255, 255); background-color: rgb(0, 138, 0);\">1．雙峰祭企画「アフリカあるある検証！」</strong></h2><h2><strong style=\"color: rgb(255, 255, 255); background-color: rgb(0, 138, 0);\">Sohosai Festival Project \"A Certain Verification of Africa!\"</strong></h2><h2><br></h2><p>アフリカ地域に対して日本人が抱きがちな様々な説を、現地の方やアフリカ地域に詳しい方にお話をうかがって検証してみました！</p><p>We have interviewed locals and people familiar with the African region to verify the various theories that Japanese people tend to have about Africa!</p><p><br></p><p>インタビューにご協力いただいた皆様、ありがとうございました\U0001F647‍♀️</p><p>※国により文化も経済状況も大きく違います。今回ご紹介するのはあくまでも一部です。</p><p>Thank you very much for your cooperation in these interviews.</p><p>*Cultures and economic conditions differ greatly from country to country. What we introduce here is only a part.</p><p><br></p><p><a href=\"https://www.youtube.com/watch?v=XBDTmf-Wrdw\" rel=\"noopener noreferrer\" target=\"_blank\">アフリカあるある検証！【日本マラウイ学生団体】 - YouTube</a></p><iframe class=\"ql-video\" frameborder=\"0\" allowfullscreen=\"true\" src=\"https://www.youtube.com/embed/XBDTmf-Wrdw?showinfo=0\"></iframe><p><br></p><p><br></p><h2><strong style=\"color: rgb(255, 255, 255); background-color: rgb(0, 138, 0);\">2．日本マラウイ学生団体の概要 </strong></h2><h2><strong style=\"color: rgb(255, 255, 255); background-color: rgb(0, 138, 0);\">What's Japan Malawi Youth Organization?</strong></h2><p><br></p><p>✔️2015年度発足　筑波大学公認学生団体（今年で8年目！）</p><p><br></p><p>✔️団体のモットー：</p><p>「日本とマラウイの架け橋となる」「日本人のアフリカに対するイメージを豊かにすること」</p><p><br></p><p>✔️活動例：隔週月曜の定例ミーティング、マラウイ共和国への渡航、アフリカで働く日本人の講演会、アフリカ出身留学生とクイズや料理イベント、農業×マラウイ、SNSによる発信</p><p><br></p><p>✔️新歓：今年は春と秋の年2回、新歓をやっています！詳細は団体公式SNSでチェック！</p><p><br></p><p>✔️団体SNS</p><p>Instagram</p><p><a href=\"https://www.instagram.com/nihon_malawi_youth_organizatio/\" rel=\"noopener noreferrer\" target=\"_blank\">https://www.instagram.com/nihon_malawi_youth_organizatio/</a></p><p><br></p><p>Twitter</p><p><a href=\"https://mobile.twitter.com/jmyo_tsukuba\" rel=\"noopener noreferrer\" target=\"_blank\">https://mobile.twitter.com/jmyo_tsukuba</a></p><p><br></p><p>Gmail</p><p>jmyo.tsukuba@gmail.com</p><p>&nbsp;</p><p>We are the student body recognized by the University of Tsukuba, established in 2015.</p><p>We focus on Malawi in Africa based on this goal, “The Team as a bridge between Japan and Malawi”</p><p>We hold report sessions and lecture meetings, participate in academic meetings, and offer information on Japan.&nbsp;We also collaborate on some projects with other NPO, youth organizations, or regional organizations.</p><p><br></p><h2><strong style=\"color: rgb(255, 255, 255); background-color: rgb(0, 138, 0);\">3．マラウイとは？　What's Malawi?</strong></h2><p>正式名称：マラウイ共和国</p><p><span style=\"background-color: transparent;\">​</span>国旗：</p><p><img src=\"https://static.wixstatic.com/media/d5cf5e_9d9ff274cb46410384534018000ff768~mv2.png/v1/fill/w_304,h_204,al_c,lg_1,q_85,enc_auto/%E5%9B%B31%EF%BC%92png.png\" alt=\"図1２png.png\" style=\"font-size: 1.6rem;\"></p><p><span style=\"background-color: transparent;\">​</span></p><p><span class=\"ql-size-small\"><img src=\"https://static.wixstatic.com/media/d5cf5e_31e95e6025a447dd862dbd155cab3fc6~mv2.png/v1/fill/w_682,h_566,al_c,lg_1,q_90,enc_auto/%E5%9B%B31.png\" alt=\"図1.png\" style=\"font-size: 1.6rem;\"></span></p><p><br></p><p>人口：1,814万人(2018年世銀より)</p><p><span style=\"background-color: transparent;\">​</span></p><p>首都：リロングウェ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p>面積：11.8万平方km</p><p><span style=\"background-color: transparent;\">​</span></p><p>民族：チェワ族、トゥンブカ族、ンゴニ族、ヤオ族</p><p><span style=\"background-color: transparent;\">​</span></p><p>言語：チェワ語（国語）、英語（公用語）、各部族語</p><p><span style=\"background-color: transparent;\">​</span></p><p>宗教：キリスト教75％、イスラム教20％、伝統的宗教5％</p><p><span style=\"background-color: transparent;\">​</span></p><p>時差：日本より－7時間</p><p><br></p><p>気候：</p><p>一年の気候は暑い乾季と温暖な雨季と涼しい小乾季に分かれる。乾季は9〜11月、雨季は11〜4月、小乾季は5〜8月である。</p><p>&nbsp;</p><p>経済：</p><p>通貨はマラウイ・クワチャ(1円＝約6マラウイ・クワチャ)。人口の8割近くが小規模農業として農業に従事する農業国である。</p><p>自給作物としてトウモロコシなどが、農産輸出品としてたばこや砂糖などが生産されている。</p><p>&nbsp;</p><p>マラウイ湖：</p><p>世界遺産であるマラウイ湖は世界で第9番目に大きい湖であり、アフリカで3番目に広く、2番目に深い湖でもある。マラウイ最大のリゾート地である。</p><p><br></p><p>【Republic of Malawi】</p><p>&nbsp;</p><p>Popultaion : 18140000 (World Bank, 2018)</p><p><span style=\"background-color: transparent;\">​</span></p><p>Capital&nbsp;：Lilongwe</p><p><span style=\"background-color: transparent;\">​</span></p><p>Area&nbsp;：118,000k㎡</p><p><span style=\"background-color: transparent;\">​</span></p><p>Tribe：Chewa、Tumbuka、Ngoni、Yao</p><p><span style=\"background-color: transparent;\">​</span></p><p>Language：Chewa（National language）、English（Official language）、Tribes languages</p><p><span style=\"background-color: transparent;\">​</span></p><p>Religion：Cristian 75％、Islam 20％、Traditional religions 5％</p><p><span style=\"background-color: transparent;\">​</span></p><p>Geography：Southeast Africa&nbsp;</p><p><span style=\"background-color: transparent;\">​</span></p><p>Equation：7hours behind Tokyo in Malawi</p><p><span style=\"background-color: transparent;\">​</span></p><p>Climate：</p><p>Malawi has a tropical climate, with a hot and a rainy season from mid-November to April, and dry winter season from September to November, the temperature rise to the point of reaching the highest levels of the year.</p><p><span style=\"background-color: transparent;\">​</span></p><p>Economy：</p><p>The kwacha is the currency of Malawi. The main products are tobacco, tea, cotton and coffee. 80% of the population engaged in agriculture.</p><p><span style=\"background-color: transparent;\">​</span></p><p>Lake of Malawi :</p><p>It is the ninth largest lake in the World and the third largest and second deepest lake in Africa. It was recognized as a World Cultural Heritage in 1984.</p><p><span style=\"background-color: transparent;\">​</span></p>"
+        content_url:
+          type: string
+        project_name:
+          type: string
+        project_category:
+          $ref: '#/components/schemas/ProjectCategory'
+        is_academic:
+          type: boolean
+        is_art:
+          type: boolean
+        is_committee:
+          type: boolean
+        created_at:
+          type: boolean
+        updated_at:
+          type: boolean
+      examples: []
+    ContentType:
+      type: string
+      title: ContentType
+      x-stoplight:
+        id: kw6nr4eykawg4
+      enum:
+        - LinkContent
+        - ArticleContent
+      description: Content type. (Note that it's not same as `Content-Type` Header
+    ReviewStatus:
+      type: string
+      title: ReviewStatus
+      x-stoplight:
+        id: 1mxqwgrfq2tr1
+      description: Status value that indicates the review progress
+      enum:
+        - NeverSubmitted
+        - Pending
+        - Approved
+        - Rejected
+    UserProfile:
+      title: UserProfile
+      x-stoplight:
+        id: 8rf3fh7hvb1lx
+      type: object
+      properties:
+        name:
+          type: string
+        is_committee:
+          type: boolean
+        email:
+          type: string
+    ProjectCategory:
+      type: string
+      title: ProjectCategory
+      x-stoplight:
+        id: 5qfe9jncnp71a
+      enum:
+        - オンライン一般企画
+        - 対面一般企画
+        - オンラインステージ企画
+        - 対面ステージ企画
+        - 調理企画
+        - 飲食物取扱い企画
+        - 本部企画
+    ProjectMetaData:
+      title: ProjectMetaData
+      x-stoplight:
+        id: ciaxfvg4q19lg
+      type: object
+      properties:
+        project_code:
+          type: string
+        project_name:
+          type: string
+        project_name_kana:
+          type: string
+        organization_name:
+          type: string
+        organization_name_kana:
+          type: string
+        description:
+          type: string
+        project_category:
+          type: string
+        is_academic:
+          type: string
+        is_art:
+          type: string
+        is_committee:
+          type: string
+        place:
+          $ref: '#/components/schemas/Place'
+        period_of_time:
+          $ref: '#/components/schemas/PeriodOfTime'
+      examples:
+        - project_code: C149
+          project_name: 今更だけどタピってく？アフリカへの贈り物
+          project_name_kana: いまさらだけどたぴってく あふりかへのおくりもの
+          organization_name: 日本マラウイ学生団体
+          organization_name_kana: にほんまらういがくせいだんたい
+          description: マラウイで主食であるシマやタピオカ、ポーチなどを販売。マラウイを舞台とする映画の上映
+          project_category: 調理企画
+          is_academic: false
+          is_art: false
+          is_committee: false
+          place:
+            isOnline: true
+            building: 2D
+            room: '206'
+          period_of_time:
+            starts_at: '2019-08-24T14:15:22Z'
+            ends_at: '2019-08-24T14:15:22Z'
+    Place:
+      title: Place
+      x-stoplight:
+        id: 8964c360eg86g
+      type: object
+      properties:
+        isOnline:
+          type: boolean
+        building:
+          type: string
+        room:
+          type: string
+    PeriodOfTime:
+      title: PeriodOfTime
+      x-stoplight:
+        id: dzz5mixl50n1h
+      type: object
+      properties:
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    Bearer:
+      name: Firebase Auth Id Token
+      type: apiKey
+      in: header
+  parameters:
+    project_code:
+      name: project_code
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^([PO][GS]|[CF])[0-9]{0,3}$'
+        minLength: 3
+        maxLength: 4
+        example: C005
+      description: Project Code
