@@ -326,31 +326,6 @@ components:
       x-stoplight:
         id: ciaxfvg4q19lg
       type: object
-      properties:
-        project_code:
-          type: string
-        project_name:
-          type: string
-        project_name_kana:
-          type: string
-        organization_name:
-          type: string
-        organization_name_kana:
-          type: string
-        description:
-          type: string
-        project_category:
-          type: string
-        is_academic:
-          type: string
-        is_art:
-          type: string
-        is_committee:
-          type: string
-        place:
-          $ref: '#/components/schemas/Place'
-        period_of_time:
-          $ref: '#/components/schemas/PeriodOfTime'
       examples:
         - project_code: C149
           project_name: 今更だけどタピってく？アフリカへの贈り物
@@ -369,6 +344,31 @@ components:
           period_of_time:
             starts_at: '2019-08-24T14:15:22Z'
             ends_at: '2019-08-24T14:15:22Z'
+      properties:
+        project_code:
+          type: string
+        project_name:
+          type: string
+        project_name_kana:
+          type: string
+        organization_name:
+          type: string
+        organization_name_kana:
+          type: string
+        description:
+          type: string
+        project_category:
+          $ref: '#/components/schemas/ProjectCategory'
+        is_academic:
+          type: boolean
+        is_art:
+          type: boolean
+        is_committee:
+          type: boolean
+        place:
+          $ref: '#/components/schemas/Place'
+        period_of_time:
+          $ref: '#/components/schemas/PeriodOfTime'
     Place:
       title: Place
       x-stoplight:
