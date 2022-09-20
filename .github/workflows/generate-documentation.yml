@@ -16,6 +16,8 @@ jobs:
           node-version: '16'
           cache: npm
           cache-dependency-path: backend-api/schema/package-lock.json
+      - run: ls -a backend-api
+      - run: ls -a backend-api/schema
       - run: npm run build:doc -- --output dist/api-server.html
         working-directory: ./backend-api/schema
       - uses: peaceiris/actions-gh-pages@v3
