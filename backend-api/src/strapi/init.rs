@@ -4,7 +4,7 @@ use super::model::{
 };
 
 use crate::model::Config;
-use crate::sos_data::load_projects;
+use crate::sos_data::load_all_projects;
 use anyhow::{anyhow, Result};
 
 pub async fn check_if_initialized(config: &Config) -> Result<bool> {
@@ -37,7 +37,7 @@ pub async fn run_init(config: &Config) -> Result<()> {
     let client = reqwest::Client::new();
 
     // Load projects from csv
-    let projects = load_projects(config)?;
+    let projects = load_all_projects(config)?;
     info!("{} projects loaded", projects.len());
     info!("Trying to post at {}", post_url);
 

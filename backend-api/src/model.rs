@@ -9,6 +9,7 @@ pub struct Config {
     pub strapi_base: String,
     pub sos_users_csv: String,
     pub sos_projects_csv: String,
+    pub sos_honki_projects_csv: String,
     pub strapi_token: String,
 }
 
