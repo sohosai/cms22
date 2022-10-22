@@ -7,7 +7,7 @@ services:
       - ./data:/usr/src/backend-api/data
     environment:
       - VIRTUAL_HOST=api.cms.sohosai.com
-      - LETSENCRYPT:HOST=api.cms.sohosai.com
+      - LETSENCRYPT_HOST=api.cms.sohosai.com
       - ETSENCRYPT_EMAIL=api.cms.sohosai.com
       - VIRTUAL_PORT=3030
       - HTTPS_METHOD=redirect
@@ -16,6 +16,7 @@ services:
       - STRAPI_TOKEN
       - STRAPI_BASE
       - RUST_LOG=info
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile

@@ -7,9 +7,10 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      VIRTUAL_HOST: strapi.cms.sohosai.com
-      LETSENCRYPT:HOST: strapi.cms.sohosai.com
-      ETSENCRYPT_EMAIL: strapi.cms.sohosai.com
+      VIRTUAL_HOST: 'strapi.cms.sohosai.com'
+      LETSENCRYPT_HOST: 'strapi.cms.sohosai.com'
+      LETSENCRYPT_EMAIL: 'jsys@sohosai.com'
+      VIRTUAL_PORT: '1337'
       DATABASE_CLIENT: ${DATABASE_CLIENT}
       DATABASE_HOST: strapiDB
       DATABASE_NAME: ${DATABASE_NAME}
@@ -48,4 +49,5 @@ services:
 
 networks:
   default:
-    name: shared
+    external:
+      name: shared
