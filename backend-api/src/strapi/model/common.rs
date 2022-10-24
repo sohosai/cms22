@@ -25,27 +25,39 @@ pub struct Thumbnail {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum Building {
     #[serde(rename(deserialize = "UNI", serialize = "STG_UNI"))]
+    #[serde(alias = "STG_UNI")]
     StgUNI,
     #[serde(rename(deserialize = "1A", serialize = "STG_1A"))]
+    #[serde(alias = "STG_1A")]
     Stg1A,
     #[serde(rename(deserialize = "1E", serialize = "BLDG_1E"))]
+    #[serde(alias = "BLDG_1E")]
     Bldg1E,
     #[serde(rename(deserialize = "1B", serialize = "BLDG_1B"))]
+    #[serde(alias = "BLDG_1B")]
     Bldg1B,
     #[serde(rename(deserialize = "1C", serialize = "BLDG_1C"))]
+    #[serde(alias = "BLDG_1C")]
     Bldg1C,
     #[serde(rename(deserialize = "2A", serialize = "BLDG_2A"))]
+    #[serde(alias = "BLDG_2A")]
     Bldg2A,
     #[serde(rename(deserialize = "2B", serialize = "BLDG_2B"))]
+    #[serde(alias = "BLDG_2B")]
     Bldg2B,
     #[serde(rename(deserialize = "2C", serialize = "BLDG_2C"))]
+    #[serde(alias = "BLDG_2C")]
     Bldg2C,
     #[serde(rename(deserialize = "2D", serialize = "BLDG_2D"))]
+    #[serde(alias = "BLDG_2D")]
     Bldg2D,
     #[serde(rename(deserialize = "3A", serialize = "BLDG_3A"))]
+    #[serde(alias = "BLDG_3A")]
     Bldg3A,
     #[serde(rename(deserialize = "3B", serialize = "BLDG_3B"))]
+    #[serde(alias = "BLDG_3B")]
     Bldg3B,
     #[serde(rename(deserialize = "5C", serialize = "BLDG_5C"))]
+    #[serde(alias = "BLDG_5C")]
     Bldg5C,
 }
