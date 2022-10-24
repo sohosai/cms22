@@ -34,6 +34,7 @@ pub async fn run(config: Config, user: User) -> Result<impl warp::Reply, Infalli
         &strapi::get_contents::GetContentsConfig {
             project_code: None,
             is_committee: None,
+            updated_since: None,
         },
     )
     .await;

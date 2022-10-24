@@ -16,6 +16,7 @@ pub async fn is_editable(config: &Config, project_code: &str) -> Result<bool> {
         &GetContentsConfig {
             project_code: Some(project_code.to_string()),
             is_committee: None,
+            updated_since: None,
         },
     )
     .await?;

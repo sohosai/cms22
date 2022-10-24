@@ -68,6 +68,7 @@ pub async fn run(
         &GetContentsConfig {
             is_committee: None,
             project_code: Some(project_code.to_string()),
+            updated_since: None,
         },
     )
     .await;

@@ -1,11 +1,13 @@
 use super::model::read::{GetContents, GetContentsItem};
 use crate::model::Config;
 use anyhow::{Context, Result};
+use chrono::{DateTime, Utc};
 
 #[derive(Debug)]
 pub struct GetContentsConfig {
     pub project_code: Option<String>,
     pub is_committee: Option<bool>,
+    pub updated_since: Option<DateTime<Utc>>,
 }
 
 impl GetContentsConfig {
@@ -22,6 +24,13 @@ impl GetContentsConfig {
             query.push((
                 format!("filters[$or][{}][project_code][$startsWith]", query.len()),
                 "本企".to_string(),
+            ));
+        }
+
+        if let Some(updated_after) = self.updated_since {
+            query.push((
+                "filters[updatedAt][$gt]".to_string(),
+                updated_after.timestamp_millis().to_string(),
             ));
         }
 

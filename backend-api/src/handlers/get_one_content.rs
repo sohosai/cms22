@@ -54,6 +54,7 @@ pub async fn run(
         &strapi::get_contents::GetContentsConfig {
             project_code: Some(project_code.to_string()),
             is_committee: None,
+            updated_since: None,
         },
     )
     .await;
