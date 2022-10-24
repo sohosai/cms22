@@ -18,7 +18,7 @@ struct Place{
 impl From<&GetContentsItem> for Place{
  fn from(item:&GetContentsItem)->Self{
   let is_online = item.project_code.contains('O');
-  let building =serde_lexpr::to_string(&item.location_building).ok().map(|s| s.replace('(', "").replace(')', ""));
+  let building =item.location_building.clone().map(|x| format!("{}",x));
   let room = item.location_room.clone();
   Place{is_online,building,room}
  }
@@ -123,7 +123,7 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
          if content.is_none(){
             warn!("Content not found for project {}",project_code);
          }
-         
+
          content.map(|content| Project::from(project, content))
         })
         .collect();

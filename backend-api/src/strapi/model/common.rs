@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ContentType {
@@ -60,4 +61,23 @@ pub enum Building {
     #[serde(rename(deserialize = "5C", serialize = "BLDG_5C"))]
     #[serde(alias = "BLDG_5C")]
     Bldg5C,
+}
+
+impl fmt::Display for Building {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Self::StgUNI => write!(f, "UNITEDステージ"),
+            Self::Stg1A => write!(f, "1Aステージ"),
+            Self::Bldg1E => write!(f, "1E"),
+            Self::Bldg1B => write!(f, "1B"),
+            Self::Bldg1C => write!(f, "1C"),
+            Self::Bldg2A => write!(f, "2A"),
+            Self::Bldg2B => write!(f, "2B"),
+            Self::Bldg2C => write!(f, "2C"),
+            Self::Bldg2D => write!(f, "2D"),
+            Self::Bldg3A => write!(f, "3A"),
+            Self::Bldg3B => write!(f, "3B"),
+            Self::Bldg5C => write!(f, "5C"),
+        }
+    }
 }
