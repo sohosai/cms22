@@ -71,7 +71,7 @@ impl Project{
     project_name_kana	:project.project_name_kana,
     organization_name	:project.organization_name,
     organization_name_kana	:project.organization_name_kana,
-    description	:content.description.clone().unwrap_or("".to_string()),
+    description	:content.description.clone().unwrap_or_else(|| "".to_string()),
     project_category	: project.project_category,
     is_academic	: parse_bool(&project.is_academic),
     is_art	: parse_bool(&project.is_art),
