@@ -1,5 +1,5 @@
-use super::{ContentType, ReviewStatus};
-use chrono::{DateTime, Utc};
+use super::{Building, ContentType, ReviewStatus};
+use chrono::{DateTime, Local,Utc};
 use serde::{Deserialize, Serialize};
 
 // Outer Option is to indicate if that field is omitted(don't cange) and inner one means the
@@ -21,6 +21,18 @@ pub struct Content {
     pub review_status: Option<Option<ReviewStatus>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub editable: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub category: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location_building: Option<Building>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location_room: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stage_start: Option<DateTime<Local>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stage_end: Option<DateTime<Local>>,
 }
 
 impl Content {
@@ -33,6 +45,12 @@ impl Content {
             content_url: None,
             review_status: Some(Some(ReviewStatus::NeverSubmitted)),
             editable: Some(false),
+            description: None,
+            category: None,
+            location_building: None,
+            location_room: None,
+            stage_start: None,
+            stage_end: None,
         }
     }
 }

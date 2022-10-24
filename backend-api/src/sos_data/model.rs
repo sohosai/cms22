@@ -130,11 +130,7 @@ impl Into<crate::model::UserProfile> for UserRecord {
     fn into(self) -> crate::model::UserProfile {
         crate::model::UserProfile {
             email: self.email,
-            name: format!(
-                "{} {}",
-                self.family_name,
-                self.given_name
-            ),
+            name: format!("{} {}", self.family_name, self.given_name),
             is_committee: self.role.is_committee(),
         }
     }

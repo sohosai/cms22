@@ -4,15 +4,15 @@ pub use model::{ProjectRecord, UserRecord};
 use crate::model::Config;
 use anyhow::Result;
 
-pub fn load_projects(file:&str) -> Result<Vec<ProjectRecord>> {
+pub fn load_projects(file: &str) -> Result<Vec<ProjectRecord>> {
     let mut reader = csv::Reader::from_path(file)?;
     Ok(reader.deserialize().filter_map(|r| r.ok()).collect())
 }
 
 pub fn load_all_projects(config: &Config) -> Result<Vec<ProjectRecord>> {
-   let projects = load_projects(&config.sos_projects_csv)?;
-   let honki_projects = load_projects(&config.sos_honki_projects_csv)?;
-   return Ok((projects.into_iter().chain(honki_projects.into_iter())).collect());
+    let projects = load_projects(&config.sos_projects_csv)?;
+    let honki_projects = load_projects(&config.sos_honki_projects_csv)?;
+    return Ok((projects.into_iter().chain(honki_projects.into_iter())).collect());
 }
 
 pub fn load_users(config: &Config) -> Result<Vec<UserRecord>> {
