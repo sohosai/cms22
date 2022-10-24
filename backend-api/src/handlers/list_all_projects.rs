@@ -120,6 +120,10 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
         .into_iter()
         .map(|(project_code,project)| async move{
          let content = cache_ref.get_content(&project_code).await;
+         if content.is_none(){
+            warn!("Content not found for project {}",project_code);
+         }
+         
          content.map(|content| Project::from(project, content))
         })
         .collect();
