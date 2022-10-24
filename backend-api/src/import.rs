@@ -69,7 +69,7 @@ async fn import_data(config: &Config, data: &ImportingData) -> Result<()> {
         review_status: None,
         editable: None,
         description: Some(data.description.clone()),
-        category: Some(data.category.clone()),
+        class: Some(data.category.clone()),
         location_building: data.building.clone(),
         location_room: data.room.clone(),
         stage_start: data.starts_at,

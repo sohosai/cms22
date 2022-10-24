@@ -24,7 +24,7 @@ pub struct Content {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub category: Option<String>,
+    pub class: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location_building: Option<Building>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -46,7 +46,7 @@ impl Content {
             review_status: Some(Some(ReviewStatus::NeverSubmitted)),
             editable: Some(false),
             description: None,
-            category: None,
+            class: None,
             location_building: None,
             location_room: None,
             stage_start: None,

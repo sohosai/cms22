@@ -201,9 +201,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProjectMetaData'
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectMetaData'
         '500':
           description: Internal Server Error
       operationId: get-anonymous-projects
@@ -369,6 +372,9 @@ components:
           $ref: '#/components/schemas/Place'
         period_of_time:
           $ref: '#/components/schemas/PeriodOfTime'
+        project_class:
+          type: string
+          example: 飲食-スイーツ
     Place:
       title: Place
       x-stoplight:
