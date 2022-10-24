@@ -43,7 +43,7 @@ impl From<&GetContentsItem> for Option<PeriodOfTime>{
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct Project{
+pub struct Project{
  project_code	:String,
  project_name	:String,
  project_name_kana	:String,
@@ -105,13 +105,17 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
 
     info!("Listing all projects");
     let mut cache = cache.lock().await; // Primary cache lock
+
+    if let Some(projects)=cache.get_project_list(){
+        let output = Output { projects:projects.to_vec() };
+        return Ok(warp::reply::with_status(warp::reply::json(&output), warp::http::StatusCode::OK));
+    }
+
     let projects = cache.projects(&config).to_owned();
 
     cache.pull_content_updates(&config).await;
 
-    let cache = &cache;
-    let cache_ref=&cache;
-   
+    let cache_ref = &cache;
     let projects:Vec<_>= projects
         .into_iter()
         .map(|(project_code,project)| async move{
@@ -121,8 +125,9 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
         .collect();
 
      let projects = future::join_all(projects).await;
-     let projects = projects.iter().filter_map(|x| x.clone()).collect();
+     let projects :Vec<Project>= projects.iter().filter_map(|x| x.clone()).collect();
 
+    cache.store_project_list(&projects.to_vec());
     info!("Listing all projects succeeded");
     Ok(warp::reply::with_status(
         warp::reply::json(&Output {

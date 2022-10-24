@@ -22,5 +22,5 @@ pub use check_save_ability::run as check_save_ability;
 mod get_my_profile;
 pub use get_my_profile::run as get_my_profile;
 
-mod list_all_projects;
+pub mod list_all_projects; //FIXME: It's curently Public, just to expose the `Project` structure. It should be private.
 pub use list_all_projects::run as list_all_projects;
