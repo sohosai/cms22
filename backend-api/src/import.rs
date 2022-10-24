@@ -20,16 +20,15 @@ struct ImportingData {
     category: String,
     building: Option<Building>,
     room: Option<String>,
-    #[serde(with="datefmt")]
+    #[serde(with = "datefmt")]
     starts_at: Option<DateTime<Local>>,
-    #[serde(with="datefmt")]
+    #[serde(with = "datefmt")]
     ends_at: Option<DateTime<Local>>,
 }
 
-
 pub mod datefmt {
     const FORMAT: &str = "%m/%d/%Y %H:%M:%S";
-    use chrono::{DateTime,Local,TimeZone};
+    use chrono::{DateTime, Local, TimeZone};
     use serde::{self, Deserialize, Deserializer, Serializer};
 
     pub fn serialize<S>(date: &Option<DateTime<Local>>, serializer: S) -> Result<S::Ok, S::Error>
@@ -45,7 +44,9 @@ pub mod datefmt {
         D: Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        let d:Result<DateTime<Local>, D::Error>  = Local.datetime_from_str(&s, FORMAT).map_err(serde::de::Error::custom);
+        let d: Result<DateTime<Local>, D::Error> = Local
+            .datetime_from_str(&s, FORMAT)
+            .map_err(serde::de::Error::custom);
         match d {
             Ok(d) => Ok(Some(d)),
             Err(_) => Ok(None),
@@ -80,7 +81,6 @@ async fn import_data(config: &Config, data: &ImportingData) -> Result<()> {
     Ok(())
 }
 
-
 #[tokio::main]
 async fn main() -> Result<()> {
     env_logger::init();
@@ -96,12 +96,12 @@ async fn main() -> Result<()> {
     };
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
-    println!("Loading from {}",filename);
+    println!("Loading from {}", filename);
     let data = load_csv_data(filename).await?;
-    println!("Importing {} records",data.len());
-    
+    println!("Importing {} records", data.len());
+
     for proj in data {
-        println!("Importing {}",proj.project_code);
+        println!("Importing {}", proj.project_code);
         import_data(&config, &proj).await?;
     }
     Ok(())
