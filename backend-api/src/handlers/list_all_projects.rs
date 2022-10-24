@@ -17,11 +17,8 @@ struct Place{
 
 impl From<&GetContentsItem> for Place{
  fn from(item:&GetContentsItem)->Self{
-  let is_online = item.project_code.contains("O");
-  let building =match serde_lexpr::to_string(&item.location_building).ok(){
-   Some(s)=>Some(s.replace("(", "").replace(")", "")) , // Strpi extra ()
-   None=>None
-  };
+  let is_online = item.project_code.contains('O');
+  let building =serde_lexpr::to_string(&item.location_building).ok().map(|s| s.replace('(', "").replace(')', ""));
   let room = item.location_room.clone();
   Place{is_online,building,room}
  }
@@ -36,7 +33,7 @@ struct PeriodOfTime{
 impl From<&GetContentsItem> for Option<PeriodOfTime>{
  /// This conversion assumes that `stage_start` and `stage_end` is `Some()`
  fn from(item:&GetContentsItem)->Self{
-  if item.project_code.contains("S") && item.stage_start.is_some() && item.stage_end.is_some(){
+  if item.project_code.contains('S') && item.stage_start.is_some() && item.stage_end.is_some(){
    Some(PeriodOfTime { starts_at:item.stage_start.unwrap() , ends_at: item.stage_end.unwrap() })
   }else{
    None
@@ -119,11 +116,7 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
         .into_iter()
         .map(|(project_code,project)| async move{
          let content = cache_ref.get_content(&project_code).await;
-         if let Some(content) = content{
-            Some(Project::from(project, content))
-         }else{
-          None
-         }
+         content.map(|content| Project::from(project, content))
         })
         .collect();
 

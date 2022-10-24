@@ -37,7 +37,7 @@ pub fn empty() -> Self {
 impl CacheInner {
     pub fn load_projects(&mut self, config: &Config) -> Result<Vec<ProjectRecord>> {
         info!("SOS file cache expired. Updating projects from the file...");
-        let projects = load_all_projects(&config).with_context(|| "failed to load all projects")?;
+        let projects = load_all_projects(config).with_context(|| "failed to load all projects")?;
         info!("File load succeed");
         self.store_projects(projects.clone());
         info!("SOS file cache updated.");
@@ -62,11 +62,7 @@ impl CacheInner {
 
         let found = self.projects.0.get(project_code);
 
-        if let Some(p) = found {
-            Some(p.clone())
-        } else {
-            None
-        }
+        found.cloned()
     }
 
     pub fn projects(&mut self,config:&Config)->HashMap<String,ProjectRecord>{
@@ -84,11 +80,7 @@ impl CacheInner {
         &self,
         project_code: &str
     ) -> Option<GetContentsItem> {
-        if let Some(content) = self.contents.0.get(project_code) {
-            return Some(content.clone());
-        } else {
-            return None;
-        }
+        self.contents.0.get(project_code).cloned()
     }
 
     pub async fn pull_content_updates(&mut self, config: &Config) {
@@ -99,7 +91,7 @@ impl CacheInner {
             is_committee: None,
             updated_since: Some(self.contents.1),
         };
-        let contents = get_contents(&config, &query).await;
+        let contents = get_contents(config, &query).await;
         if contents.is_err() {
             error!(
                 "Failed to update contents cache. Reason: {}",
