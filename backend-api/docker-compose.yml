@@ -13,6 +13,7 @@ services:
       - HTTPS_METHOD=redirect
       - SOS_USERS_CSV=data/sos-users.csv
       - SOS_PROJECTS_CSV=data/sos-projects.csv
+      - SOS_HONKI_PROJECTS_CSV=data/sos-honki-projects.csv
       - STRAPI_TOKEN
       - STRAPI_BASE
       - RUST_LOG=info
