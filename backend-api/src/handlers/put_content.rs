@@ -25,6 +25,12 @@ impl Input {
             content_url: Some(self.content_url),
             review_status: Some(Some(ReviewStatus::Pending)),
             editable: None,
+            description: None,
+            class: None,
+            location_building: None,
+            location_room: None,
+            stage_start: None,
+            stage_end: None,
         }
     }
 }

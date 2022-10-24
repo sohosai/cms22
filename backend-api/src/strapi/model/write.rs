@@ -1,5 +1,5 @@
 use super::{Building, ContentType, ReviewStatus};
-use chrono::{DateTime, Local,Utc};
+use chrono::{DateTime, Local, Utc};
 use serde::{Deserialize, Serialize};
 
 // Outer Option is to indicate if that field is omitted(don't cange) and inner one means the

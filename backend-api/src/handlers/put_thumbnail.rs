@@ -119,6 +119,12 @@ pub async fn run(
             review_status: Some(Some(ReviewStatus::Pending)),
             thumbnail: Some(id),
             editable: None,
+            description: None,
+            class: None,
+            location_building: None,
+            location_room: None,
+            stage_start: None,
+            stage_end: None,
         },
     )
     .await;

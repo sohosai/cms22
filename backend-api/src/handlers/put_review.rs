@@ -23,6 +23,12 @@ impl Into<Content> for Input {
             content_url: None,
             review_status: Some(Some(self.review_status)),
             editable: None,
+            description: None,
+            class: None,
+            location_building: None,
+            location_room: None,
+            stage_start: None,
+            stage_end: None,
         }
     }
 }
