@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate log;
 
+mod cache;
 mod filters;
 mod handlers;
 mod model;
@@ -28,7 +29,8 @@ async fn main() -> Result<()> {
 
     info!("Listening on port 3030");
 
-    warp::serve(filters::filter(&config))
+    let cache = cache::empty_cache();
+    warp::serve(filters::filter(&config, cache))
         .run(([0, 0, 0, 0], 3030))
         .await;
 

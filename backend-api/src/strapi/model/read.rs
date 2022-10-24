@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
+use super::Building;
+
 /*
  * Get request common types
  */
@@ -54,4 +56,10 @@ pub struct GetContentsItem {
     #[serde(rename = "publishedAt")]
     pub published_at: Option<DateTime<Utc>>,
     pub review_status: super::ReviewStatus,
+    pub location_building: Option<Building>,
+    pub location_room: Option<String>,
+    pub stage_start: Option<DateTime<Utc>>,
+    pub stage_end: Option<DateTime<Utc>>,
+    pub class: Option<String>,
+    pub description: Option<String>
 }

@@ -5,6 +5,11 @@ use warp::Filter;
 mod auth;
 use auth::with_auth;
 
+mod cache;
+use cache::with_cache;
+
+use crate::cache::Cache;
+
 // Filter components
 
 fn list() -> warp::filters::BoxedFilter<()> {
@@ -37,6 +42,14 @@ fn save_ability() -> warp::filters::BoxedFilter<()> {
 
 fn me() -> warp::filters::BoxedFilter<()> {
     warp::path("me").boxed()
+}
+
+fn anonymous() -> warp::filters::BoxedFilter<()> {
+    warp::path("anonymous").boxed()
+}
+
+fn projects() -> warp::filters::BoxedFilter<()> {
+    warp::path("projects").boxed()
 }
 
 fn get() -> warp::filters::BoxedFilter<()> {
@@ -144,8 +157,20 @@ fn get_my_profile(
         .and_then(move |user| handlers::get_my_profile(config.clone(), user))
 }
 
+fn list_all_projects(
+    config: Config,
+    cache: Cache,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    get()
+        .and(anonymous())
+        .and(projects())
+        .and(with_cache(cache))
+        .and_then(move |cache| handlers::list_all_projects(config.clone(), cache))
+}
+
 pub fn filter(
     config: &Config,
+    cache: Cache,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     get_my_profile(config.clone())
         .or(check_save_ability(config.clone()))
@@ -155,6 +180,7 @@ pub fn filter(
         .or(put_review(config.clone()))
         .or(put_thumbnail(config.clone()))
         .or(put_content(config.clone()))
+        .or(list_all_projects(config.clone(), cache))
         .with(warp::log("INFO"))
         .with(
             warp::cors()
