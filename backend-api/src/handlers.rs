@@ -24,3 +24,6 @@ pub use get_my_profile::run as get_my_profile;
 
 pub mod list_all_projects; //FIXME: It's curently Public, just to expose the `Project` structure. It should be private.
 pub use list_all_projects::run as list_all_projects;
+
+mod get_public_content;
+pub use get_public_content::run as get_public_content;

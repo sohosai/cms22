@@ -168,6 +168,20 @@ fn list_all_projects(
         .and_then(move |cache| handlers::list_all_projects(config.clone(), cache))
 }
 
+fn get_public_content(
+    config: Config,
+    cache: Cache,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    get()
+        .and(anonymous())
+        .and(contents())
+        .and(project_code())
+        .and(with_cache(cache))
+        .and_then(move |project_code, cache| {
+            handlers::get_public_content(project_code, config.clone(), cache)
+        })
+}
+
 pub fn filter(
     config: &Config,
     cache: Cache,
@@ -180,7 +194,8 @@ pub fn filter(
         .or(put_review(config.clone()))
         .or(put_thumbnail(config.clone()))
         .or(put_content(config.clone()))
-        .or(list_all_projects(config.clone(), cache))
+        .or(list_all_projects(config.clone(), cache.clone()))
+        .or(get_public_content(config.clone(), cache))
         .with(warp::log("INFO"))
         .with(
             warp::cors()

@@ -97,7 +97,22 @@ pub async fn get_contents_in_page(
         .await
         .with_context(|| format!("Parse error while parsing response at page {}", page))?;
 
-    let items = contents.data.iter().map(|x| x.attributes.clone()).collect();
+    let items = contents
+        .data
+        .iter()
+        .map(|x| {
+            let mut c = x.attributes.clone();
+            if (&c).content_html.is_some() && c.content_html.clone().unwrap().is_empty() {
+                c.content_html = None;
+            }
+
+            if (&c).content_url.is_some() && c.content_url.clone().unwrap().is_empty() {
+                c.content_url = None;
+            }
+
+            c
+        })
+        .collect();
     let page_count = contents.meta.pagination.page_count;
 
     info!("Download success at page {}", page);

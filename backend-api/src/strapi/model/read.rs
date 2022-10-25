@@ -61,5 +61,5 @@ pub struct GetContentsItem {
     pub stage_start: Option<DateTime<Utc>>,
     pub stage_end: Option<DateTime<Utc>>,
     pub class: Option<String>,
-    pub description: Option<String>
+    pub description: Option<String>,
 }

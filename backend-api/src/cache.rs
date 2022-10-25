@@ -1,3 +1,4 @@
+use crate::handlers::list_all_projects::Project as ProjectListItem;
 use crate::model::Config;
 use crate::sos_data::{load_all_projects, ProjectRecord};
 use crate::strapi::get_contents::{get_contents, GetContentsConfig};
@@ -6,35 +7,34 @@ use anyhow::Context;
 use anyhow::Result;
 use chrono::{DateTime, Duration, TimeZone, Utc};
 use std::sync::Arc;
-use tokio::sync::Mutex;
 use std::{collections::HashMap, ops::Add};
-use crate::handlers::list_all_projects::Project as ProjectListItem;
+use tokio::sync::Mutex;
 
 pub type Cache = Arc<Mutex<CacheInner>>;
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct CacheInner {
     cache_ttl: Duration,
     output_cache_ttl: Duration,
     projects: (HashMap<String, ProjectRecord>, DateTime<Utc>), // SOS Data. (cache<project_code,project> , expire)
     contents: (HashMap<String, GetContentsItem>, DateTime<Utc>), // Strapi Data. (cache<project_code,content> , last_updated)
-    project_list: (Vec<ProjectListItem>, DateTime<Utc>), // Output cache. Expires soon.
+    project_list: (Vec<ProjectListItem>, DateTime<Utc>),         // Output cache. Expires soon.
 }
 
-pub fn empty_cache()-> Cache{
+pub fn empty_cache() -> Cache {
     Arc::new(Mutex::new(CacheInner::empty()))
 }
 
-impl CacheInner{
-pub fn empty() -> Self {
-    Self{
-        cache_ttl: Duration::minutes(15),
-        output_cache_ttl: Duration::minutes(1),
-        projects: (HashMap::new(), Utc.timestamp(0, 0)),
-        contents: (HashMap::new(), Utc.timestamp(0, 0)),
-        project_list: (Vec::new(), Utc.timestamp(0, 0)),
+impl CacheInner {
+    pub fn empty() -> Self {
+        Self {
+            cache_ttl: Duration::minutes(15),
+            output_cache_ttl: Duration::minutes(1),
+            projects: (HashMap::new(), Utc.timestamp(0, 0)),
+            contents: (HashMap::new(), Utc.timestamp(0, 0)),
+            project_list: (Vec::new(), Utc.timestamp(0, 0)),
+        }
     }
-}
 }
 
 /// Project list
@@ -59,7 +59,6 @@ impl CacheInner {
     }
 
     pub fn get_project(&mut self, project_code: &str, config: &Config) -> Option<ProjectRecord> {
-       
         if self.projects.1 < Utc::now() {
             self.load_projects(config);
         }
@@ -69,21 +68,18 @@ impl CacheInner {
         found.cloned()
     }
 
-    pub fn projects(&mut self,config:&Config)->HashMap<String,ProjectRecord>{
-     if self.projects.1 < Utc::now() {
-         self.load_projects(config);
-     }
+    pub fn projects(&mut self, config: &Config) -> HashMap<String, ProjectRecord> {
+        if self.projects.1 < Utc::now() {
+            self.load_projects(config);
+        }
 
-     self.projects.0.clone()
+        self.projects.0.clone()
     }
 }
 
 /// Contents
 impl CacheInner {
-    pub async fn get_content(
-        &self,
-        project_code: &str
-    ) -> Option<GetContentsItem> {
+    pub async fn get_content(&self, project_code: &str) -> Option<GetContentsItem> {
         self.contents.0.get(project_code).cloned()
     }
 
@@ -124,24 +120,23 @@ impl CacheInner {
         contents.insert(project_code.to_string(), item);
     }
 
-    pub async fn contents (&mut self,config:&Config)->HashMap<String,GetContentsItem>{
+    pub async fn contents(&mut self, config: &Config) -> HashMap<String, GetContentsItem> {
         self.pull_content_updates(config).await;
         self.contents.0.clone()
     }
 }
 
-
 /// project list
-impl CacheInner{
-    pub fn get_project_list(&self)->Option<&Vec<ProjectListItem>>{
+impl CacheInner {
+    pub fn get_project_list(&self) -> Option<&Vec<ProjectListItem>> {
         if self.project_list.1 < Utc::now() {
-             None
-        }else{
+            None
+        } else {
             Some(self.project_list.0.as_ref())
         }
     }
 
-    pub fn store_project_list(&mut self,project_list:&Vec<ProjectListItem>){
-        self.project_list = (project_list.to_vec(),Utc::now().add(self.output_cache_ttl));
+    pub fn store_project_list(&mut self, project_list: &Vec<ProjectListItem>) {
+        self.project_list = (project_list.to_vec(), Utc::now().add(self.output_cache_ttl));
     }
 }

@@ -85,7 +85,10 @@ pub enum Role {
 
 impl Role {
     pub fn is_committee(&self) -> bool {
-        matches!(self, Role::CommitteeOperator | Role::Committee | Self::Administrator)
+        matches!(
+            self,
+            Role::CommitteeOperator | Role::Committee | Self::Administrator
+        )
     }
 }
 
