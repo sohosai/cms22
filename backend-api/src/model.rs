@@ -72,7 +72,7 @@ impl Content {
     pub fn from(item: crate::strapi::model::read::GetContentsItem, config: &Config) -> Self {
         let project = get_project_by_code(config, &item.project_code)
             .unwrap()
-            .unwrap();
+            .expect(format!("Project {} not found", item.project_code).as_str());
 
         let thumbnail = match item.thumbnail.data {
             Some(data) => Some(format!("{}{}", config.strapi_base, data.attributes.url)),
