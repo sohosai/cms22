@@ -17,7 +17,7 @@ struct Place {
 
 impl From<&GetContentsItem> for Place {
     fn from(item: &GetContentsItem) -> Self {
-        let is_online = item.project_code.contains('O') || item.is_online;
+        let is_online = item.project_code.contains('O') || item.is_online.unwrap_or_else(|| false);
         let building = item.location_building.clone().map(|x| format!("{}", x));
         let room = item.location_room.clone();
         Place {
