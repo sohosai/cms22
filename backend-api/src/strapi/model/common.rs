@@ -52,6 +52,9 @@ pub enum Building {
     #[serde(rename(deserialize = "2D", serialize = "BLDG_2D"))]
     #[serde(alias = "BLDG_2D")]
     Bldg2D,
+    #[serde(rename(deserialize = "2H", serialize = "BLDG_2H"))]
+    #[serde(alias = "BLDG_2H")]
+    Bldg2H,
     #[serde(rename(deserialize = "3A", serialize = "BLDG_3A"))]
     #[serde(alias = "BLDG_3A")]
     Bldg3A,
@@ -75,6 +78,7 @@ impl fmt::Display for Building {
             Self::Bldg2B => write!(f, "2B"),
             Self::Bldg2C => write!(f, "2C"),
             Self::Bldg2D => write!(f, "2D"),
+            Self::Bldg2H => write!(f, "2H"),
             Self::Bldg3A => write!(f, "3A"),
             Self::Bldg3B => write!(f, "3B"),
             Self::Bldg5C => write!(f, "5C"),
