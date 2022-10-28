@@ -3,7 +3,7 @@ use crate::model::{Config, Message};
 use crate::sos_data::model::ProjectCategory;
 use crate::sos_data::ProjectRecord;
 use crate::strapi::model::read::GetContentsItem;
-use crate::strapi::model::{ContentType,ReviewStatus};
+use crate::strapi::model::{ContentType, ReviewStatus};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
@@ -94,7 +94,6 @@ pub async fn run(
         }
     };
 
-
     cache.pull_content_updates(&config).await;
     let content = match cache.get_content(&project_code).await {
         Some(c) => c,
@@ -106,26 +105,26 @@ pub async fn run(
         }
     };
 
-    let content = match content.review_status{
+    let content = match content.review_status {
         ReviewStatus::Approved => content,
-        ReviewStatus::NeverSubmitted=> {
+        ReviewStatus::NeverSubmitted => {
             return Ok(warp::reply::with_status(
                 warp::reply::json(&Message::new("No content has submitted")),
                 warp::http::StatusCode::NO_CONTENT,
             ));
-        },
-        ReviewStatus::Pending=>{
+        }
+        ReviewStatus::Pending => {
             return Ok(warp::reply::with_status(
                 warp::reply::json(&Message::new("Article is under review")),
                 warp::http::StatusCode::CONFLICT,
             ));
         }
-        ReviewStatus::Rejected=> {
+        ReviewStatus::Rejected => {
             return Ok(warp::reply::with_status(
                 warp::reply::json(&Message::new("Content has rejected")),
                 warp::http::StatusCode::CONFLICT,
             ));
-        },
+        }
     };
 
     let output = Output::from(project, content, &config);
