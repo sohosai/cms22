@@ -62,4 +62,5 @@ pub struct GetContentsItem {
     pub stage_end: Option<DateTime<Utc>>,
     pub class: Option<String>,
     pub description: Option<String>,
+    pub is_online: bool,
 }
