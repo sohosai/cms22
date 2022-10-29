@@ -73,8 +73,14 @@ async fn import_data(config: &Config, data: &ImportingData) -> Result<()> {
         class: Some(data.category.clone()),
         location_building: data.building.clone(),
         location_room: data.room.clone(),
-        stage_start: data.starts_at,
-        stage_end: data.ends_at,
+        period_of_time: match data.starts_at.is_some(){
+            true=> Some(vec![strapi::model::PeriodOfTime {
+                starts_at: data.starts_at.unwrap(),
+                ends_at: data.ends_at.unwrap(),
+            }]),
+            false=> None,
+        }
+        ,
     };
 
     update_content(config, &project_code, &content).await?;

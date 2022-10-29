@@ -11,7 +11,7 @@ pub async fn get_id_by_project_code(config: &Config, project_code: &str) -> Resu
         .get(url)
         .bearer_auth(&config.strapi_token.as_str())
         .query(&[
-            ("populate", "thumbnail"),
+            ("populate", "thumbnail,period_of_time"),
             ("filters[project_code][$eq]", project_code),
         ])
         .send()
