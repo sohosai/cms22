@@ -27,8 +27,7 @@ impl Into<Content> for Input {
             class: None,
             location_building: None,
             location_room: None,
-            stage_start: None,
-            stage_end: None,
+            period_of_time: None
         }
     }
 }

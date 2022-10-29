@@ -77,7 +77,7 @@ pub async fn get_contents_in_page(
     let result = client
         .get(url)
         .query(&option.to_query())
-        .query(&[("populate", "thumbnail")])
+        .query(&[("populate", "thumbnail,period_of_time")])
         .query(&[("pagination[page]", page.to_string())])
         .bearer_auth(&config.strapi_token.as_str())
         .send()
