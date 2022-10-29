@@ -1,5 +1,5 @@
-use super::{Building, ContentType, ReviewStatus,PeriodOfTime};
-use chrono::{DateTime,  Utc};
+use super::{Building, ContentType, PeriodOfTime, ReviewStatus};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 // Outer Option is to indicate if that field is omitted(don't cange) and inner one means the
@@ -30,7 +30,7 @@ pub struct Content {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location_room: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub period_of_time : Option<Vec<PeriodOfTime>>
+    pub period_of_time: Option<Vec<PeriodOfTime>>,
 }
 
 impl Content {
@@ -47,7 +47,7 @@ impl Content {
             class: None,
             location_building: None,
             location_room: None,
-            period_of_time: None
+            period_of_time: None,
         }
     }
 }

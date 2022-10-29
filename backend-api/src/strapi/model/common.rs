@@ -1,6 +1,6 @@
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::fmt;
-use chrono::{DateTime, Local};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ContentType {
@@ -88,7 +88,7 @@ impl fmt::Display for Building {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct PeriodOfTime{
-    pub starts_at : DateTime<Local>,
-    pub ends_at : DateTime<Local>,
+pub struct PeriodOfTime {
+    pub starts_at: DateTime<Local>,
+    pub ends_at: DateTime<Local>,
 }

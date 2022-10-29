@@ -123,7 +123,7 @@ pub async fn run(
             class: None,
             location_building: None,
             location_room: None,
-            period_of_time: None
+            period_of_time: None,
         },
     )
     .await;
