@@ -3,7 +3,6 @@ use crate::model::Config;
 use crate::sos_data::model::ProjectCategory;
 use crate::sos_data::ProjectRecord;
 use crate::strapi::model::read::GetContentsItem;
-use chrono::{DateTime, Utc};
 use futures::future;
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
@@ -29,27 +28,6 @@ impl From<&GetContentsItem> for Place {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct PeriodOfTime {
-    starts_at: DateTime<Utc>,
-    ends_at: DateTime<Utc>,
-}
-
-impl From<&GetContentsItem> for Option<PeriodOfTime> {
-    /// This conversion assumes that `stage_start` and `stage_end` is `Some()`
-    fn from(item: &GetContentsItem) -> Self {
-        if item.project_code.contains('S') && item.stage_start.is_some() && item.stage_end.is_some()
-        {
-            Some(PeriodOfTime {
-                starts_at: item.stage_start.unwrap(),
-                ends_at: item.stage_end.unwrap(),
-            })
-        } else {
-            None
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
     project_code: String,
     project_name: String,
@@ -62,7 +40,7 @@ pub struct Project {
     is_art: bool,
     is_committee: bool,
     place: Place,
-    period_of_time: Option<PeriodOfTime>,
+    period_of_time: Option<Vec<crate::strapi::model::PeriodOfTime>>,
     project_class: Option<String>,
 }
 
@@ -72,6 +50,18 @@ fn parse_bool(s: &str) -> bool {
 
 impl Project {
     pub fn from(project: ProjectRecord, content: GetContentsItem) -> Self {
+        // Return null if period_of_time is null OR EMPTY
+        let period_of_time = match content.period_of_time.clone() {
+            Some(period_of_time) => {
+                if period_of_time.len() == 0 {
+                    None
+                } else {
+                    Some(period_of_time)
+                }
+            }
+            None => None,
+        };
+
         Self {
             project_code: project.project_code,
             project_name: project.project_name,
@@ -87,7 +77,7 @@ impl Project {
             is_art: parse_bool(&project.is_art),
             is_committee: parse_bool(&project.is_committee),
             place: (&content).into(),
-            period_of_time: (&content).into(),
+            period_of_time,
             project_class: content.class,
         }
     }
