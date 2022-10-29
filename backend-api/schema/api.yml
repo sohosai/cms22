@@ -371,7 +371,9 @@ components:
         place:
           $ref: '#/components/schemas/Place'
         period_of_time:
-          $ref: '#/components/schemas/PeriodOfTime'
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectMetaData'
         project_class:
           type: string
           example: 飲食-スイーツ
