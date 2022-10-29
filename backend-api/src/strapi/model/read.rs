@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::Building;
+use super::{Building, PeriodOfTime};
 
 /*
  * Get request common types
@@ -58,8 +58,7 @@ pub struct GetContentsItem {
     pub review_status: super::ReviewStatus,
     pub location_building: Option<Building>,
     pub location_room: Option<String>,
-    pub stage_start: Option<DateTime<Utc>>,
-    pub stage_end: Option<DateTime<Utc>>,
+    pub period_of_time: Option<Vec<PeriodOfTime>>,
     pub class: Option<String>,
     pub description: Option<String>,
     pub is_online: Option<bool>,
