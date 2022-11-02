@@ -43,7 +43,7 @@ pub struct Project {
     place: Place,
     period_of_time: Option<Vec<crate::strapi::model::PeriodOfTime>>,
     project_class: Option<String>,
-    content_availavle: bool,
+    content_available: bool,
 }
 
 fn parse_bool(s: &str) -> bool {
@@ -81,7 +81,7 @@ impl Project {
             place: (&content).into(),
             period_of_time,
             project_class: content.class,
-            content_availavle: content.review_status == ReviewStatus::Approved,
+            content_available: content.review_status == ReviewStatus::Approved,
         }
     }
 }
