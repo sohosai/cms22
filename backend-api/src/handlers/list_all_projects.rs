@@ -3,6 +3,7 @@ use crate::model::Config;
 use crate::sos_data::model::ProjectCategory;
 use crate::sos_data::ProjectRecord;
 use crate::strapi::model::read::GetContentsItem;
+use crate::strapi::model::ReviewStatus;
 use futures::future;
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
@@ -42,6 +43,7 @@ pub struct Project {
     place: Place,
     period_of_time: Option<Vec<crate::strapi::model::PeriodOfTime>>,
     project_class: Option<String>,
+    content_availavle: bool,
 }
 
 fn parse_bool(s: &str) -> bool {
@@ -79,6 +81,7 @@ impl Project {
             place: (&content).into(),
             period_of_time,
             project_class: content.class,
+            content_availavle: content.review_status == ReviewStatus::Approved,
         }
     }
 }

@@ -377,6 +377,10 @@ components:
         project_class:
           type: string
           example: 飲食-スイーツ
+        content_available:
+          type: boolean
+        '':
+          type: string
     Place:
       title: Place
       x-stoplight:

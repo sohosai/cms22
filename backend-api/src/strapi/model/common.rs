@@ -8,7 +8,7 @@ pub enum ContentType {
     ArticleContent,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ReviewStatus {
     NeverSubmitted,
     Pending,
