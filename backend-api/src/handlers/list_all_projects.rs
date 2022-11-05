@@ -3,6 +3,7 @@ use crate::model::Config;
 use crate::sos_data::model::ProjectCategory;
 use crate::sos_data::ProjectRecord;
 use crate::strapi::model::read::GetContentsItem;
+use crate::strapi::model::ContentType;
 use crate::strapi::model::ReviewStatus;
 use futures::future;
 use serde::{Deserialize, Serialize};
@@ -44,6 +45,8 @@ pub struct Project {
     period_of_time: Option<Vec<crate::strapi::model::PeriodOfTime>>,
     project_class: Option<String>,
     content_available: bool,
+    external_link: Option<String>,
+    thumbnail_url: Option<String>,
 }
 
 fn parse_bool(s: &str) -> bool {
@@ -51,7 +54,7 @@ fn parse_bool(s: &str) -> bool {
 }
 
 impl Project {
-    pub fn from(project: ProjectRecord, content: GetContentsItem) -> Self {
+    pub fn from(project: ProjectRecord, content: GetContentsItem,config: &Config) -> Self {
         // Return null if period_of_time is null OR EMPTY
         let period_of_time = match content.period_of_time.clone() {
             Some(period_of_time) => {
@@ -82,6 +85,18 @@ impl Project {
             period_of_time,
             project_class: content.class,
             content_available: content.review_status == ReviewStatus::Approved,
+            external_link: if content.content_type == ContentType::LinkContent
+                && content.content_url.is_some() && content.review_status == ReviewStatus::Approved
+            {
+                Some(content.content_url.unwrap())
+            } else {
+                None
+            },
+            thumbnail_url: if content.thumbnail.data.is_some() {
+                Some(format!("{}{}",config.strapi_base,content.thumbnail.data.unwrap().attributes.url))
+            } else {
+                None
+            },
         }
     }
 }
@@ -123,6 +138,7 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
     cache.pull_content_updates(&config).await;
 
     let cache_ref = &cache;
+    let config = &config;
     let projects: Vec<_> = projects
         .into_iter()
         .map(|(project_code, project)| async move {
@@ -131,7 +147,7 @@ pub async fn run(config: Config, cache: Cache) -> Result<impl warp::Reply, Infal
                 warn!("Content not found for project {}", project_code);
             }
 
-            content.map(|content| Project::from(project, content))
+            content.map(|content| Project::from(project, content,&config))
         })
         .collect();
 
