@@ -379,8 +379,14 @@ components:
           example: 飲食-スイーツ
         content_available:
           type: boolean
-        '':
-          type: string
+        thumbnail_url:
+          type:
+            - string
+            - 'null'
+        external_link:
+          type:
+            - string
+            - 'null'
     Place:
       title: Place
       x-stoplight:
