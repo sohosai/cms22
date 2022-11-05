@@ -15,7 +15,9 @@
     "@strapi/strapi": "4.3.6",
     "better-sqlite3": "7.4.6",
     "lodash": "^4.17.21",
-    "pg": "^8.8.0"
+    "pg": "^8.8.0",
+    "strapi-plugin-rest-cache": "^4.2.4",
+    "strapi-provider-rest-cache-memory": "^4.2.4"
   },
   "author": {
     "name": "A Strapi developer"
