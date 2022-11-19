@@ -1,96 +1,17 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { paths } from '@/const/config'
-import AuditArticle from '@/components/AuditArticle.vue'
-import Contact from '@/components/Contact.vue'
-import EditArticle from '../components/EditArticle.vue'
-import Faq from '@/components/Faq.vue'
-import firebase from 'firebase'
-import Layout from '../components/Layout.vue'
-import MyContents from '../components/MyContents.vue'
-import PostedContents from '@/components/PostedContents.vue'
-import Signin from '@/components/Signin.vue'
 import Top from '@/components/Top.vue'
-import { getMyProfile } from '@/utls/getMyProfile'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: paths.signin.path(),
-    component: Signin,
-  },
-  {
-    path: paths.top.path(),
+    path:'/:catchAll(.*)',
     component: Top,
-  },
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: paths.contents.path(),
-        component: MyContents,
-        meta: { requireAuth: true },
-      },
-      {
-        path: paths.contents.path() + '/:id/edit',
-        component: EditArticle,
-        meta: { requireAuth: true },
-      },
-      {
-        path: paths.postedContents.path(),
-        component: PostedContents,
-        meta: { requireAuth: true, requireAuditor: true },
-      },
-      {
-        path: paths.contents.path() + '/:id/audit',
-        component: AuditArticle,
-        meta: { requireAuth: true, requireAuditor: true },
-      },
-      {
-        path: paths.contact.path(),
-        component: Contact,
-      },
-      {
-        path: paths.faq.path(),
-        component: Faq,
-      },
-    ],
   },
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-})
-
-router.beforeEach((to, _, next) => {
-  const requireAuth = to.matched.some((record) => record.meta.requireAuth)
-  const requireAuditor = to.matched.some((record) => record.meta.requireAuditor)
-  if (!requireAuth) {
-    next()
-    return
-  }
-  firebase.auth().onAuthStateChanged(async (user) => {
-    if (!user) {
-      next({
-        path: paths.signin.path(),
-        query: { redirect: to.fullPath },
-      })
-      return
-    }
-    if (!requireAuditor) {
-      next()
-      return
-    }
-    const result = await getMyProfile()
-    if (result.is_committee) {
-      next()
-    } else {
-      next({
-        path: paths.signin.path(),
-        query: { redirect: to.fullPath },
-      })
-    }
-  })
 })
 
 export default router

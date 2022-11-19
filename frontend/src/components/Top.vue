@@ -3,10 +3,9 @@
     <div class="left">
       <div class="title">雙峰祭コンテンツ投稿システム</div>
       <div class="message">
-        雙峰祭ウェブサイトに掲載する、企画を紹介する記事やリンクを投稿します。
-      </div>
-      <div class="start">
-        <Button @click="handleStartButton" text="はじめる" />
+        <p>本システムは、11/19をもって提供を終了いたしました。</p>
+        <p>雙峰祭へのご参加ありがとうございました。</p>
+        <p>提出いただいたコンテンツは、<a href="https://sohosai.com/">雙峰祭公式ウェブサイト</a>にて11月末まで公開いたします。</p>
       </div>
     </div>
     <div class="hero">
@@ -16,24 +15,9 @@
 </template>
 
 <script lang="ts">
-import { paths } from '@/const/config'
 import { defineComponent } from 'vue-demi'
-import { useRouter } from 'vue-router'
-import Button from './Button.vue'
 
 export default defineComponent({
-  components: {
-    Button,
-  },
-  setup() {
-    const router = useRouter()
-    const handleStartButton = () => {
-      router.push(paths.contents.path())
-    }
-    return {
-      handleStartButton,
-    }
-  },
 })
 </script>
 
@@ -50,6 +34,7 @@ export default defineComponent({
 }
 .message {
   line-height: 1.7;
+  width: 30vw;
 }
 .hero {
   width: clamp(1px, 40rem, 50%);
